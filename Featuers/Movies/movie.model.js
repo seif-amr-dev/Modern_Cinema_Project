@@ -40,7 +40,7 @@ const MoviesSchema = new mongoose.Schema(
     duration: {
       type: Number, // minutes
       required: true,
-      min: [1, "Duration must be at least 1 minute"]
+      min: [90, "Duration must be at least 90 minutes"]
     },
 
     ageRating: {
