@@ -8,6 +8,7 @@ const authroute= require("./Featuers/Auth/Auth.routes.js")
 const globalError=require("./middleware/globalerror.js")
 const movieroutes=require("./Featuers/Movies/movie.routes.js")
 const hallroutes= require("./Featuers/Halls/Halls.routes.js")
+const showtimeroutes =require("./Featuers/showtime/showtime.routes.js")
 app.use(express.json())
 app.use("/auth",authroute)
 
@@ -15,6 +16,7 @@ app.use("/users",userRoutes)
 
 app.use("/movie",movieroutes)
 app.use("/hall", hallroutes);
+app.use("/showtime", showtimeroutes);
 
 app.use((req, res) => {
   res.status(404).json({
