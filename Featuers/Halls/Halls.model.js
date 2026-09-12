@@ -69,7 +69,7 @@ const HallsSchema = new mongoose.Schema(
 );
 
 // Auto-generate the seat map from rows/seatsPerRow whenever either changes
-HallsSchema.pre("save", function (next) {
+HallsSchema.pre("save", function () {
   if (this.isModified("rows") || this.isModified("seatsPerRow")) {
     const seatMap = [];
     for (let r = 0; r < this.rows; r++) {
@@ -80,7 +80,6 @@ HallsSchema.pre("save", function (next) {
     }
     this.seatMap = seatMap;
   }
-  next();
 });
 
 // Total capacity is derived, not stored separately, so it never drifts out of sync
