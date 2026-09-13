@@ -29,14 +29,16 @@ exports.CreateMovie = catchAsync(async (req, res, next) => {
     title,
     description,
     poster: { url: result.secure_url, publicId: result.public_id },
-    genre,
+  
     duration,
     ageRating,
     score,
     releaseDate,
     status,
     director,
-    cast,
+    genre: genre ? JSON.parse(genre) : [],
+cast: cast ? JSON.parse(cast) : [],
+
     trailerUrl
   });
 

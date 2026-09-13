@@ -1,5 +1,6 @@
 require("dotenv").config()
 const express = require("express")
+const cors = require("cors");
 const app= express();
 const userRoutes =require("./Featuers/users/users.routes.js")
 
@@ -9,6 +10,7 @@ const globalError=require("./middleware/globalerror.js")
 const movieroutes=require("./Featuers/Movies/movie.routes.js")
 const hallroutes= require("./Featuers/Halls/Halls.routes.js")
 const showtimeroutes =require("./Featuers/showtime/showtime.routes.js")
+app.use(cors());
 app.use(express.json())
 app.use("/auth",authroute)
 
