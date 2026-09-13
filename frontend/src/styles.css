@@ -1,0 +1,17 @@
+:root {
+  --bg-dark: #0f172a;
+  --bg-panel: rgba(30, 41, 59, 0.7);
+  --accent-gold: #f59e0b;
+  --accent-gold-hover: #d97706;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --seat-available: #334155;
+  --seat-booked: #ef4444;
+  --seat-selected: #10b981;
+}
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+}

@@ -1,0 +1,58 @@
+<div class="cinema-overlay">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="glow-icon">🍿</div>
+      <h2>{{ isLoginMode ? 'Welcome to Modern Cinema' : 'Create an Account' }}</h2>
+      <p>{{ isLoginMode ? 'Sign in to book your favorite movies' : 'Join us to get started' }}</p>
+    </div>
+    
+    @if (isLoginMode) {
+      <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="input-group">
+          <input type="email" id="email" formControlName="email" required placeholder=" " />
+          <label for="email">Email Address</label>
+        </div>
+        
+        <div class="input-group">
+          <input type="password" id="password" formControlName="password" required placeholder=" " />
+          <label for="password">Password</label>
+        </div>
+        
+        <button type="submit" class="auth-btn" [disabled]="loginForm.invalid">
+          <span>Sign In</span>
+          <div class="btn-glow"></div>
+        </button>
+      </form>
+    } @else {
+      <form class="auth-form" [formGroup]="signupForm" (ngSubmit)="onSignup()">
+        <div class="input-group">
+          <input type="text" id="name" formControlName="name" required placeholder=" " />
+          <label for="name">Full Name</label>
+        </div>
+        
+        <div class="input-group">
+          <input type="email" id="signup-email" formControlName="email" required placeholder=" " />
+          <label for="signup-email">Email Address</label>
+        </div>
+        
+        <div class="input-group">
+          <input type="password" id="signup-password" formControlName="password" required placeholder=" " />
+          <label for="signup-password">Password</label>
+        </div>
+        
+        <button type="submit" class="auth-btn" [disabled]="signupForm.invalid">
+          <span>Create Account</span>
+          <div class="btn-glow"></div>
+        </button>
+      </form>
+    }
+
+    <p class="auth-footer">
+      @if (isLoginMode) {
+        Don't have an account? <a (click)="toggleMode()" style="cursor: pointer;">Sign up now</a>
+      } @else {
+        Already have an account? <a (click)="toggleMode()" style="cursor: pointer;">Sign in instead</a>
+      }
+    </p>
+  </div>
+</div>
