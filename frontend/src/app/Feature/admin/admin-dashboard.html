@@ -1,0 +1,151 @@
+<div class="cinema-overlay">
+  <div class="admin-card">
+    <div class="admin-header">
+      <div class="glow-icon">🎬</div>
+      <h2>{{ editingMovieId ? 'Edit Movie' : 'Add New Movie' }}</h2>
+      <p>Fill in the details to add a movie to the catalog</p>
+    </div>
+
+    <form class="admin-form" [formGroup]="movieForm" (ngSubmit)="onSubmit()">
+      <div class="input-group full-width">
+        <input type="text" id="title" formControlName="title" required placeholder=" " />
+        <label for="title">Title</label>
+      </div>
+
+      <div class="input-group full-width">
+        <textarea
+          id="description"
+          formControlName="description"
+          required
+          placeholder=" "
+        ></textarea>
+        <label for="description">Description</label>
+      </div>
+
+      <div class="form-row">
+        <div class="input-group">
+          <input type="number" id="duration" formControlName="duration" required placeholder=" " />
+          <label for="duration">Duration (minutes)</label>
+        </div>
+
+        <div class="input-group">
+          <input type="text" id="ageRating" formControlName="ageRating" required placeholder=" " />
+          <label for="ageRating">Age Rating</label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="input-group">
+          <input type="date" id="releaseDate" formControlName="releaseDate" required />
+          <label for="releaseDate" [class.label-active]="hasDateValue()">Release Date</label>
+        </div>
+
+        <div class="input-group">
+          <select id="status" formControlName="status">
+            <option value="now-showing">Now Showing</option>
+            <option value="coming-soon">Coming Soon</option>
+          </select>
+          <label for="status" class="label-active">Status</label>
+        </div>
+      </div>
+
+      <div class="input-group full-width">
+        <input type="text" id="director" formControlName="director" placeholder=" " />
+        <label for="director">Director</label>
+      </div>
+
+      <div class="form-row">
+        <div class="input-group">
+          <input type="text" id="genre" formControlName="genre" placeholder=" " />
+          <label for="genre">Genre (comma separated)</label>
+        </div>
+
+        <div class="input-group">
+          <input type="text" id="cast" formControlName="cast" placeholder=" " />
+          <label for="cast">Cast (comma separated)</label>
+        </div>
+      </div>
+
+      <div class="input-group full-width">
+        <input type="text" id="trailerUrl" formControlName="trailerUrl" placeholder=" " />
+        <label for="trailerUrl">Trailer URL</label>
+      </div>
+
+      <div class="file-group full-width">
+        <label class="file-label">Poster Image</label>
+        <label class="file-drop">
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+          <span>{{ selectedFile ? selectedFile.name : 'Click to choose a poster image' }}</span>
+        </label>
+      </div>
+
+      <button type="submit" class="admin-btn full-width" [disabled]="isSubmitting">
+        <span>{{
+          isSubmitting ? 'Saving...' : editingMovieId ? 'Update Movie' : 'Add Movie'
+        }}</span>
+        <div class="btn-glow"></div>
+      </button>
+      @if (editingMovieId) {
+        <button type="button" class="cancel-btn full-width" (click)="cancelEdit()">
+          Cancel Edit
+        </button>
+      }
+      @if (successMessage) {
+        <p class="feedback success">{{ successMessage }}</p>
+      }
+      @if (errorMessage) {
+        <p class="feedback error">{{ errorMessage }}</p>
+      }
+    </form>
+
+    <div class="movies-section">
+      <h3>Existing Movies</h3>
+
+      @if (isLoadingMovies) {
+        <p class="status-text">Loading movies...</p>
+      }
+
+      @if (loadError) {
+        <p class="feedback error">{{ loadError }}</p>
+      }
+
+      @if (!isLoadingMovies && movies.length === 0 && !loadError) {
+        <p class="status-text">No movies added yet.</p>
+      }
+
+      @if (movies.length > 0) {
+        <table class="movies-table">
+          <thead>
+            <tr>
+              <th>Poster</th>
+              <th>Title</th>
+              <th>Duration</th>
+              <th>Status</th>
+              <th>Release Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (movie of movies; track movie._id) {
+              <tr>
+                <td><img [src]="movie.poster.url" [alt]="movie.title" class="poster-thumb" /></td>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.duration }} min</td>
+                <td>{{ movie.status }}</td>
+                <td>{{ movie.releaseDate | date: 'mediumDate' }}</td>
+                <td class="actions-cell">
+                  <button type="button" class="action-btn edit-btn" (click)="startEdit(movie)">
+                    Edit
+                  </button>
+                  <button type="button" class="action-btn delete-btn" (click)="deleteMovie(movie)">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </div>
+</div>
