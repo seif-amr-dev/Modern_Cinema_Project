@@ -7,7 +7,7 @@ import { AuthService } from '../../core/services/auth';
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './auth.html',
-  styleUrl: './auth.css'
+  styleUrl: './auth.css',
 })
 export class Auth {
   private fb = inject(FormBuilder);
@@ -17,13 +17,13 @@ export class Auth {
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
   });
 
   signupForm = this.fb.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   toggleMode() {
@@ -43,7 +43,7 @@ export class Auth {
         error: (error) => {
           console.error('Login failed:', error);
           alert('Invalid email or password');
-        }
+        },
       });
     } else {
       console.warn('Login form is invalid!', this.loginForm.errors);
@@ -59,7 +59,7 @@ export class Auth {
         },
         error: (err) => {
           console.error('Signup failed:', err);
-        }
+        },
       });
     } else {
       console.warn('Signup form is invalid!', this.signupForm.errors);
