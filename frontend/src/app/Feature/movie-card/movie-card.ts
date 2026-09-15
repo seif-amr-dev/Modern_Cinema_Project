@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  imports: [],
   selector: 'app-movie-card',
-  styleUrl: './movie-card.css',
+  standalone: true,
+  imports: [RouterLink],
   templateUrl: './movie-card.html',
+  styleUrl: './movie-card.css',
 })
-export class MovieCard {}
+export class MovieCard {
+  @Input() movie: any;
+}
