@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const SeatSchema = new mongoose.Schema(
   {
     row: {
-      type: String, // e.g. "A", "B", "C"
+      type: String,
       required: true
     },
     number: {
@@ -68,7 +68,6 @@ const HallsSchema = new mongoose.Schema(
   }
 );
 
-// Auto-generate the seat map from rows/seatsPerRow whenever either changes
 HallsSchema.pre("save", function () {
   if (this.isModified("rows") || this.isModified("seatsPerRow")) {
     const seatMap = [];
@@ -82,7 +81,6 @@ HallsSchema.pre("save", function () {
   }
 });
 
-// Total capacity is derived, not stored separately, so it never drifts out of sync
 HallsSchema.virtual("capacity").get(function () {
   return this.rows * this.seatsPerRow;
 });
