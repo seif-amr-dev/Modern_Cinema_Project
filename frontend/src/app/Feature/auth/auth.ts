@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 
 @Component({
@@ -12,6 +13,7 @@ import { AuthService } from '../../core/services/auth';
 export class Auth {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   isLoginMode = true;
 
@@ -28,7 +30,6 @@ export class Auth {
 
   toggleMode() {
     this.isLoginMode = !this.isLoginMode;
-    // Optional: reset forms when switching modes
     this.loginForm.reset();
     this.signupForm.reset();
   }
@@ -55,10 +56,13 @@ export class Auth {
       this.authService.signup(this.signupForm.value).subscribe({
         next: (res) => {
           console.log('Account created!', res);
-          this.toggleMode();
+          const userEmail = this.signupForm.value.email;
+          
+          this.router.navigate(['/verify-email'], { queryParams: { email: userEmail } });
         },
         error: (err) => {
           console.error('Signup failed:', err);
+          alert('Signup failed. Check console for details.');
         }
       });
     } else {

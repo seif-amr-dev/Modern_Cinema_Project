@@ -1,0 +1,132 @@
+.cinema-overlay {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 1rem;
+}
+
+.auth-card {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 450px; /* Slightly wider to comfortably fit 6 OTP boxes */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  color: #f8fafc;
+  animation: slideUp 0.6s ease-out;
+  text-align: center;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-header {
+  margin-bottom: 2.5rem;
+}
+
+.glow-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
+}
+
+.auth-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.auth-header p {
+  color: #94a3b8;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.auth-header strong {
+  color: #f59e0b; /* Highlights the dynamic email address */
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.otp-container {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+/* Forces styling on the third-party ng-otp-input component */
+::ng-deep .otp-input-wrapper .otp-input {
+  width: 45px !important;
+  height: 55px !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  color: #f8fafc !important;
+  font-size: 1.5rem !important;
+  font-weight: bold !important;
+  margin: 0 4px !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep .otp-input-wrapper .otp-input:focus {
+  border-color: #f59e0b !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1) !important;
+  outline: none !important;
+}
+
+.auth-btn {
+  position: relative;
+  background: #f59e0b;
+  color: #0f172a;
+  border: none;
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.auth-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -10px rgba(245, 158, 11, 0.6);
+}
+
+.auth-btn:disabled {
+  background: #475569;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.btn-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+
+.auth-btn:hover:not(:disabled) .btn-glow {
+  opacity: 1;
+  transform: scale(1);
+}
