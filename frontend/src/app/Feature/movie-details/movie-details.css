@@ -1,0 +1,147 @@
+.movie-details {
+  min-height: 600px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 50px;
+  padding: 60px 8%;
+  background: #020617;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+.movie-poster img {
+  width: 100%;
+  max-width: 320px;
+  height: 480px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.movie-info {
+  max-width: 800px;
+  align-self: center;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--accent-gold, #f5c518);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.movie-info h1 {
+  margin: 0 0 18px;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.1;
+}
+
+.movie-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.movie-meta span,
+.genres span,
+.cast-list span {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #1e293b;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.genres {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
+.genres span {
+  background: transparent;
+  border: 1px solid #475569;
+}
+
+.description {
+  color: #cbd5e1;
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 25px;
+}
+
+.movie-info strong {
+  color: #ffffff;
+}
+
+.cast {
+  margin-top: 20px;
+}
+
+.cast-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 28px 0;
+  font-size: 1.1rem;
+}
+
+.rating span:first-child {
+  color: var(--accent-gold, #f5c518);
+  font-size: 1.5rem;
+}
+
+.rating strong {
+  font-size: 1.4rem;
+}
+
+.book-btn {
+  padding: 13px 30px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent-gold, #f5c518);
+  color: #020617;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.book-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.loading {
+  min-height: 500px;
+  display: grid;
+  place-items: center;
+  background: #020617;
+  color: #cbd5e1;
+}
+
+@media (max-width: 768px) {
+  .movie-details {
+    grid-template-columns: 1fr;
+    padding: 40px 6%;
+    gap: 30px;
+  }
+
+  .movie-poster {
+    text-align: center;
+  }
+
+  .movie-poster img {
+    margin: 0 auto;
+  }
+}

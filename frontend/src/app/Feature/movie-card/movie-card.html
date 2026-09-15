@@ -1,8 +1,33 @@
 <div class="movie-card">
-  <div class="poster-placeholder"></div>
+
+  <div
+    class="poster-placeholder"
+    [style.background-image]="'url(' + movie.poster.url + ')'"
+  ></div>
+
   <div class="card-content">
-    <h3>Dune: Part Two</h3>
-    <p>Sci-Fi • 2h 46m</p>
-    <button class="book-btn">Book Tickets</button>
+
+    <h3>{{ movie.title }}</h3>
+
+    <p>
+      {{ movie.genre.join(' • ') }} • {{ movie.duration }} min
+    </p>
+
+    <div class="card-actions">
+
+      <a
+        class="details-btn"
+        [routerLink]="['/movie', movie._id]"
+      >
+        View Details
+      </a>
+
+      <button class="book-btn">
+        Book Tickets
+      </button>
+
+    </div>
+
   </div>
+
 </div>
