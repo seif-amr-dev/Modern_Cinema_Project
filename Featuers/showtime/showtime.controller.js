@@ -23,8 +23,8 @@ exports.CreateShowtime = catchAsync(async (req, res, next) => {
     return next(
       new AppError(
         400,
-        "movie, hall, startTime, endTime and price are required"
-      )
+        "movie, hall, startTime, endTime and price are required",
+      ),
     );
   }
 
@@ -40,6 +40,12 @@ exports.CreateShowtime = catchAsync(async (req, res, next) => {
 
   if (parsedStartTime >= parsedEndTime) {
     return next(new AppError(400, "Start time must be before end time"));
+  }
+
+  const now = new Date();
+
+  if (parsedStartTime <= now) {
+    return next(new AppError(400, "Showtime cannot start in the past or now"));
   }
 
   const existingMovie = await movies.findOne({
@@ -68,8 +74,8 @@ exports.CreateShowtime = catchAsync(async (req, res, next) => {
     return next(
       new AppError(
         400,
-        "Showtime duration cannot be shorter than the movie duration"
-      )
+        "Showtime duration cannot be shorter than the movie duration",
+      ),
     );
   }
 
@@ -82,7 +88,7 @@ exports.CreateShowtime = catchAsync(async (req, res, next) => {
 
   if (conflict) {
     return next(
-      new AppError(409, "This hall already has a showtime during this period")
+      new AppError(409, "This hall already has a showtime during this period"),
     );
   }
 
@@ -209,8 +215,8 @@ exports.UpdateShowtime = catchAsync(async (req, res, next) => {
     return next(
       new AppError(
         400,
-        "Showtime duration cannot be shorter than the movie duration"
-      )
+        "Showtime duration cannot be shorter than the movie duration",
+      ),
     );
   }
 
@@ -224,10 +230,7 @@ exports.UpdateShowtime = catchAsync(async (req, res, next) => {
 
   if (conflict) {
     return next(
-      new AppError(
-        409,
-        "This hall already has a showtime during this period"
-      )
+      new AppError(409, "This hall already has a showtime during this period"),
     );
   }
 
@@ -246,7 +249,7 @@ exports.UpdateShowtime = catchAsync(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   res.status(200).json({
@@ -267,7 +270,7 @@ exports.DeleteShowtime = catchAsync(async (req, res, next) => {
     },
     {
       new: true,
-    }
+    },
   );
 
   if (!result) {
