@@ -1,0 +1,12 @@
+<div class="checkout-box">
+  <h3>Booking Summary</h3>
+  <p>Selected seats: {{ (selectedSeats$ | async)?.length || 0 }}</p>
+
+  <ul class="seats-list">
+    <li *ngFor="let seat of (selectedSeats$ | async)">
+      {{ seat.row }}{{ seat.number }} — {{ seat.price }} EGP
+    </li>
+  </ul>
+
+  <p class="total">Total: {{ totalPrice$ | async }} EGP</p>
+</div>

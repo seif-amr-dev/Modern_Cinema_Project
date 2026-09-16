@@ -1,0 +1,18 @@
+<div class="booking-page" *ngIf="!confirmedTicket">
+  <h1>Select your seats</h1>
+
+  <app-seat-selection [showId]="showId"></app-seat-selection>
+  <app-checkout-summary></app-checkout-summary>
+
+  <button
+    class="confirm-btn"
+    [disabled]="((selectedCount$ | async) ?? 0) === 0"
+    (click)="onConfirm()">
+    Confirm booking
+  </button>
+</div>
+
+<div class="booking-page" *ngIf="confirmedTicket">
+  <h1>Booking confirmed!</h1>
+  <app-digital-ticket [ticket]="confirmedTicket"></app-digital-ticket>
+</div>

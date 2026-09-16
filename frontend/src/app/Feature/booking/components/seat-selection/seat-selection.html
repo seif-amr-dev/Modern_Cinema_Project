@@ -1,0 +1,15 @@
+<div *ngIf="loading$ | async" class="status-msg">Loading seats...</div>
+
+<div *ngIf="error$ | async as error" class="status-msg error">{{ error }}</div>
+
+<div class="seat-grid" *ngIf="!(loading$ | async) && !(error$ | async)">
+  <div *ngFor="let seat of (seats$ | async)"
+       class="seat"
+       [class.available]="seat.status === 'available'"
+       [class.booked]="seat.status === 'booked'"
+       [class.selected]="seat.status === 'selected'"
+       [class.vip]="seat.type === 'vip'"
+       (click)="onSeatClick(seat)">
+    {{ seat.row }}{{ seat.number }}
+  </div>
+</div>
