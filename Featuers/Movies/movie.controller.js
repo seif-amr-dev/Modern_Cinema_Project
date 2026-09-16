@@ -114,19 +114,25 @@ exports.UpdateMovie = catchAsync(async (req, res, next) => {
     return next(new AppError(404, "Movie not found"));
   }
 
-  const updateData = {
-    title,
-    description,
-    genre,
-    duration,
-    ageRating,
-    score,
-    releaseDate,
-    status,
-    director,
-    cast,
-    trailerUrl
-  };
+const updateData = {
+  title,
+  description,
+  duration,
+  ageRating,
+  score,
+  releaseDate,
+  status,
+  director,
+  trailerUrl
+};
+
+if (genre !== undefined) {
+  updateData.genre = JSON.parse(genre);
+}
+
+if (cast !== undefined) {
+  updateData.cast = JSON.parse(cast);
+}
 
   // Only touch the poster if a new file was uploaded
   if (req.file) {

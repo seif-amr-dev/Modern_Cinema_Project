@@ -2,12 +2,34 @@ const users = require("./users.model.js");
 const AppError = require("../../utils/Apperror.js");
 const catchasync = require("../../utils/catchasync.js");
 const bcrypt = require("bcryptjs");
+const uploadToCloudinary = require("../../utils/uploadToCloudinary.js");
 
 exports.CreateUser = catchasync(
   async (req, res, next) => {
-    const { name, email, password, phone, dateOfBirth, gender, image } = req.body;
+    const {
+      name,
+      email,
+      password,
+      phone,
+      dateOfBirth,
+      gender
+    } = req.body;
 
-    const hashedpassword = await bcrypt.hash(password, +process.env.SALT_ROUNDS);
+    const hashedpassword = await bcrypt.hash(
+      password,
+      +process.env.SALT_ROUNDS
+    );
+
+    let image;
+
+    if (req.file) {
+      const result = await uploadToCloudinary(
+        req.file.buffer,
+        "cinema/users"
+      );
+
+      image = result.secure_url;
+    }
 
     const user = await users.create({
       name,
@@ -40,12 +62,15 @@ exports.GetallUsers = catchasync(
 
 exports.UpdatUser = catchasync(
   async (req, res, next) => {
-    const { name, phone, dateOfBirth, gender, image } = req.body;
+
+   if (req.user.role === "user" && req.body.role === "admin") {
+  return next(new AppError(403, "You can't change your role"));
+}
 
     const user = await users.findOneAndUpdate(
       { _id: req.params.id, isActive: true },
-      { name, phone, dateOfBirth, gender, image },
-      { returnDocument: "after", runValidators: true, new: true }
+      req.body,
+      { runValidators: true, new: true }
     );
 
     if (!user) {
@@ -109,3 +134,36 @@ exports.BanUser = catchasync(
     });
   }
 );
+
+
+
+
+exports.UpdateUserImage = catchasync(async (req, res, next) => {
+  if (!req.file) {
+    return next(new AppError(400, "Image is required"));
+  }
+
+  const user = await users.findOne({
+    _id: req.params.id,
+    isDeleted: false
+  });
+
+  if (!user) {
+    return next(new AppError(404, "User not found"));
+  }
+
+  const result = await uploadToCloudinary(
+    req.file.buffer,
+    "cinema/users"
+  );
+
+  user.image = result.secure_url;
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Profile image updated successfully",
+    result: user
+  });
+});
