@@ -1,0 +1,22 @@
+.booking-page{
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.confirm-btn{
+  margin-top: 20px;
+  padding: 10px 24px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.confirm-btn:hover{
+  background-color: #45a049;
+}
+.confirm-btn:disabled{
+  background-color: #ccc;
+  cursor: not-allowed;
+}

@@ -1,0 +1,17 @@
+<div class="ticket-card" *ngIf="ticket">
+  <div class="ticket-header">
+    <h2>{{ ticket.movieTitle }}</h2>
+    <span class="ticket-id">#{{ ticket.bookingId }}</span>
+  </div>
+  <div class="ticket-body">
+    <p><strong>Hall:</strong> {{ ticket.hallName }}</p>
+    <p><strong>Show time:</strong> {{ ticket.showTime }}</p>
+    <p><strong>Seats:</strong>
+      <span *ngFor="let seat of ticket.seats">{{ seat.row }}{{ seat.number }}</span>
+    </p>
+    <p class="total"><strong>Total:</strong> {{ ticket.totalPrice }} EGP</p>
+  </div>
+  <div class="ticket-footer">
+    <div class="qr-placeholder">QR</div>
+  </div>
+</div>
