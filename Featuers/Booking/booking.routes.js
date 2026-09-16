@@ -9,6 +9,7 @@ const {
   CancelBooking,
 } = require("./booking.controller.js");
 
+//"booking/showtime/:showtimeId/seats"
 router.get("/showtime/:showtimeId/seats", GetShowtimeSeats);
 
 router
