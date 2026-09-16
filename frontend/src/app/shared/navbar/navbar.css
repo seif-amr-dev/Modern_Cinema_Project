@@ -5,17 +5,18 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-
   background: #0f172a;
   border-bottom: 1px solid #1e293b;
 }
 
+/* Apply directly to the .logo class instead of .logo a */
 .logo {
   color: #ffffff;
   text-decoration: none;
   font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: 0.5px;
+  transition: color 0.2s;
 }
 
 .logo:hover {
@@ -54,6 +55,39 @@
   opacity: 0.85;
 }
 
+/* --- LOGGED-IN STATE STYLES --- */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-badge {
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  border-radius: 7px;
+  background: transparent;
+  border: 1px solid #ef4444; /* Clean red outline */
+  color: #ef4444;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 600px) {
   .navbar {
     padding: 0 4%;
@@ -63,11 +97,16 @@
     gap: 12px;
   }
 
-  .nav-links a {
+  .nav-links a, .user-badge, .logout-btn {
     font-size: 0.85rem;
   }
 
+  /* Fixed the mobile logo selector here too */
   .logo {
     font-size: 1.1rem;
+  }
+  
+  .user-menu {
+    gap: 8px;
   }
 }

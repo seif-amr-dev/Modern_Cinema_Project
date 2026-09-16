@@ -1,0 +1,25 @@
+<div class="cinema-overlay">
+  <div class="auth-card text-center">
+    <div class="auth-header">
+      <div class="glow-icon">✉️</div>
+      <h2>Verify Your Email</h2>
+      <p>We sent a 6-digit code to <br><strong>{{ userEmail }}</strong></p>
+    </div>
+
+    <form class="auth-form" [formGroup]="verifyForm" (ngSubmit)="onVerify()">
+      
+      <!-- The ng-otp-input component -->
+      <div class="otp-container">
+        <ng-otp-input 
+          (onInputChange)="onOtpChange($event)" 
+          [config]="{ length: 6, allowNumbersOnly: true }">
+        </ng-otp-input>
+      </div>
+
+      <button type="submit" class="auth-btn" [disabled]="verifyForm.invalid">
+        <span>Verify Account</span>
+        <div class="btn-glow"></div>
+      </button>
+    </form>
+  </div>
+</div>

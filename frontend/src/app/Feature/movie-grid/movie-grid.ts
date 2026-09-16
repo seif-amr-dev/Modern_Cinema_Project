@@ -1,4 +1,4 @@
-import { Component , inject } from '@angular/core';
+import { ChangeDetectorRef, Component , inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MovieCard } from '../movie-card/movie-card';
 import { MovieService } from '../../core/services/movie';
@@ -13,7 +13,7 @@ import { MovieService } from '../../core/services/movie';
 export class MovieGrid {
 
   private movieService = inject(MovieService);
-
+  private cdr = inject(ChangeDetectorRef);
   movies: any[] = [];
 
   searchTerm = '';
@@ -34,6 +34,7 @@ export class MovieGrid {
       .subscribe({
         next: (response) => {
           this.movies = response.results;
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Error loading movies:', error);

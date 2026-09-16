@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../../core/services/movie';
@@ -14,6 +14,7 @@ export class MovieDetails implements OnInit {
 
   private route = inject(ActivatedRoute);
   private movieService = inject(MovieService);
+  private cdr = inject(ChangeDetectorRef);
 
   movie: any = null;
 
@@ -29,6 +30,7 @@ export class MovieDetails implements OnInit {
     this.movieService.getMovieById(id).subscribe({
       next: (response) => {
         this.movie = response.result;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error loading movie:', error);
