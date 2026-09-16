@@ -1,0 +1,223 @@
+<div
+  class="user-form"
+>
+  <div
+    class="user-form__overlay"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="onEscape()"
+  >
+    <div
+      class="user-form__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="user-form-title"
+    >
+      <header class="user-form__header">
+        <div class="user-form__heading">
+          <div class="user-form__heading-icon" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="M12 8v4" />
+              <path d="M12 16h.01" />
+            </svg>
+          </div>
+          <div>
+            <h2 id="user-form-title" class="user-form__title">{{ title() }}</h2>
+            <p class="user-form__subtitle">{{ subtitle() }}</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="user-form__close"
+          (click)="onCancel()"
+          [disabled]="saving()"
+          aria-label="Close dialog"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </header>
+
+      <form
+        class="user-form__form"
+        [formGroup]="activeForm"
+        (ngSubmit)="onSubmit()"
+        novalidate
+      >
+        <div class="user-form__field">
+          <label class="user-form__label" for="user-form-name">Full Name</label>
+          <input
+            class="user-form__input"
+            id="user-form-name"
+            type="text"
+            formControlName="name"
+            autocomplete="name"
+            required
+            autofocus
+          />
+          @if (hasError('name', 'required')) {
+            <p class="user-form__error" role="alert">
+              {{ validationMessage('name', 'required') }}
+            </p>
+          }
+          @if (hasError('name', 'minlength')) {
+            <p class="user-form__error" role="alert">
+              {{ validationMessage('name', 'minlength') }}
+            </p>
+          }
+          @if (hasError('name', 'maxlength')) {
+            <p class="user-form__error" role="alert">
+              {{ validationMessage('name', 'maxlength') }}
+            </p>
+          }
+        </div>
+
+        @if (mode() === 'create') {
+          <div class="user-form__field">
+            <label class="user-form__label" for="user-form-email">Email Address</label>
+            <input
+              class="user-form__input"
+              id="user-form-email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              required
+            />
+            @if (hasError('email', 'required')) {
+              <p class="user-form__error" role="alert">
+                {{ validationMessage('email', 'required') }}
+              </p>
+            }
+            @if (hasError('email', 'email')) {
+              <p class="user-form__error" role="alert">
+                {{ validationMessage('email', 'email') }}
+              </p>
+            }
+          </div>
+
+          <div class="user-form__field">
+            <label class="user-form__label" for="user-form-password">Password</label>
+            <input
+              class="user-form__input"
+              id="user-form-password"
+              type="password"
+              formControlName="password"
+              autocomplete="new-password"
+              required
+            />
+            <p class="user-form__hint">Minimum 8 characters.</p>
+            @if (hasError('password', 'required')) {
+              <p class="user-form__error" role="alert">
+                {{ validationMessage('password', 'required') }}
+              </p>
+            }
+            @if (hasError('password', 'minlength')) {
+              <p class="user-form__error" role="alert">
+                {{ validationMessage('password', 'minlength') }}
+              </p>
+            }
+          </div>
+        } @else {
+          <div class="user-form__grid">
+            <div class="user-form__field">
+              <label class="user-form__label" for="user-form-phone">Phone Number</label>
+              <input
+                class="user-form__input"
+                id="user-form-phone"
+                type="tel"
+                formControlName="phone"
+                autocomplete="tel"
+                placeholder="+20 100 123 4567"
+              />
+            </div>
+
+            <div class="user-form__field">
+              <label class="user-form__label" for="user-form-dob">Date of Birth</label>
+              <input
+                class="user-form__input user-form__input--date"
+                id="user-form-dob"
+                type="date"
+                formControlName="dateOfBirth"
+              />
+            </div>
+          </div>
+
+          <div class="user-form__field">
+            <label class="user-form__label" for="user-form-gender">Gender</label>
+            <select
+              class="user-form__input"
+              id="user-form-gender"
+              formControlName="gender"
+            >
+              <option value="">Not specified</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+
+          <div class="user-form__field">
+            <label class="user-form__label" for="user-form-image">Profile Image URL</label>
+            <input
+              class="user-form__input"
+              id="user-form-image"
+              type="url"
+              formControlName="image"
+              autocomplete="off"
+              placeholder="https://example.com/avatar.jpg"
+            />
+            <p class="user-form__hint">Optional. Provide a direct link to an image.</p>
+          </div>
+        }
+
+        @if (serverError(); as error) {
+          <p class="user-form__server-error" role="alert">{{ error }}</p>
+        }
+
+        <footer class="user-form__footer">
+          <button
+            type="button"
+            class="user-form__button user-form__button--ghost"
+            (click)="onCancel()"
+            [disabled]="saving()"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="user-form__button user-form__button--primary"
+            [disabled]="saving()"
+          >
+            {{
+              saving()
+                ? mode() === 'create'
+                  ? 'Creating…'
+                  : 'Saving…'
+                : mode() === 'create'
+                  ? 'Create User'
+                  : 'Save User'
+            }}
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+</div>

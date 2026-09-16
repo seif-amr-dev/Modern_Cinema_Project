@@ -1,0 +1,224 @@
+<div class="hall-form">
+  <div
+    class="hall-form__overlay"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="onEscape()"
+  >
+    <div
+      class="hall-form__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="hall-form-title"
+    >
+      <header class="hall-form__header">
+        <div class="hall-form__heading">
+          <div class="hall-form__heading-icon" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <path d="M8 21h8" />
+              <path d="M12 17v4" />
+            </svg>
+          </div>
+          <div class="hall-form__heading-text">
+            <h2 id="hall-form-title" class="hall-form__title">{{ title() }}</h2>
+            <p class="hall-form__subtitle">{{ subtitle() }}</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="hall-form__close"
+          (click)="onCancel()"
+          [disabled]="saving()"
+          aria-label="Close dialog"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </header>
+
+      <form
+        class="hall-form__form"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        novalidate
+      >
+        <div class="hall-form__field hall-form__field--span">
+          <label class="hall-form__label" for="hall-form-name">Hall Name</label>
+          <input
+            class="hall-form__input"
+            id="hall-form-name"
+            type="text"
+            formControlName="name"
+            required
+            autofocus
+            placeholder="e.g. Hall 3 — Prime"
+          />
+          @if (hasError('name', 'required')) {
+            <p class="hall-form__error" role="alert">
+              {{ validationMessage('name', 'required') }}
+            </p>
+          }
+          @if (hasError('name', 'minlength')) {
+            <p class="hall-form__error" role="alert">
+              {{ validationMessage('name', 'minlength') }}
+            </p>
+          }
+          @if (hasError('name', 'maxlength')) {
+            <p class="hall-form__error" role="alert">
+              {{ validationMessage('name', 'maxlength') }}
+            </p>
+          }
+        </div>
+
+        <div class="hall-form__grid">
+          <div class="hall-form__field">
+            <label class="hall-form__label" for="hall-form-rows">Number of Rows</label>
+            <div class="hall-form__number-wrap">
+              <input
+                class="hall-form__input hall-form__input--number"
+                id="hall-form-rows"
+                type="number"
+                min="1"
+                max="26"
+                step="1"
+                formControlName="rows"
+                required
+              />
+              <span class="hall-form__number-unit">rows</span>
+            </div>
+            @if (hasError('rows', 'required')) {
+              <p class="hall-form__error" role="alert">
+                {{ validationMessage('rows', 'required') }}
+              </p>
+            }
+            @if (hasError('rows', 'min')) {
+              <p class="hall-form__error" role="alert">
+                {{ validationMessage('rows', 'min') }}
+              </p>
+            }
+            @if (hasError('rows', 'max')) {
+              <p class="hall-form__error" role="alert">
+                {{ validationMessage('rows', 'max') }}
+              </p>
+            }
+          </div>
+
+          <div class="hall-form__field">
+            <label class="hall-form__label" for="hall-form-spr">Seats Per Row</label>
+            <div class="hall-form__number-wrap">
+              <input
+                class="hall-form__input hall-form__input--number"
+                id="hall-form-spr"
+                type="number"
+                min="1"
+                step="1"
+                formControlName="seatsPerRow"
+                required
+              />
+              <span class="hall-form__number-unit">seats/row</span>
+            </div>
+            @if (hasError('seatsPerRow', 'required')) {
+              <p class="hall-form__error" role="alert">
+                {{ validationMessage('seatsPerRow', 'required') }}
+              </p>
+            }
+            @if (hasError('seatsPerRow', 'min')) {
+              <p class="hall-form__error" role="alert">
+                {{ validationMessage('seatsPerRow', 'min') }}
+              </p>
+            }
+          </div>
+        </div>
+
+        <div class="hall-form__preview">
+          <div class="hall-form__preview-header">
+            <span class="hall-form__preview-title">Calculated Preview</span>
+            <span class="hall-form__preview-badge">Live Topology</span>
+          </div>
+
+          <div class="hall-form__preview-total">
+            <span>Total Seating Capacity</span>
+            <div class="hall-form__preview-total-value">
+              <span class="hall-form__preview-total-number">{{ previewTotal() }}</span>
+              <span class="hall-form__preview-total-unit">allocated seats</span>
+            </div>
+          </div>
+
+          <div class="hall-form__preview-grid-wrap">
+            <div class="hall-form__preview-screen" aria-hidden="true"></div>
+            <span class="hall-form__preview-label">Curved Projection Arc</span>
+            <div
+              class="hall-form__preview-grid"
+              [style.grid-template-columns]="'repeat(' + previewColumns() + ', auto)'"
+            >
+              @for (seat of previewSeats(); track seat) {
+                <span class="hall-form__seat"></span>
+              }
+            </div>
+            <div class="hall-form__preview-legend">
+              <span class="hall-form__legend-item">
+                <span class="hall-form__legend-dot" aria-hidden="true"></span>
+                Standard Tier
+              </span>
+            </div>
+          </div>
+        </div>
+
+        @if (serverError(); as error) {
+          <p class="hall-form__server-error" role="alert">{{ error }}</p>
+        }
+
+        <footer class="hall-form__footer">
+          <div class="hall-form__footer-status">
+            <span class="hall-form__footer-pulse" aria-hidden="true"></span>
+            <span>{{ mode() === 'edit' ? 'Hall verified' : 'New hall' }}</span>
+          </div>
+          <div class="hall-form__footer-actions">
+            <button
+              type="button"
+              class="hall-form__button hall-form__button--ghost"
+              (click)="onCancel()"
+              [disabled]="saving()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="hall-form__button hall-form__button--primary"
+              [disabled]="saving()"
+            >
+              {{
+                saving()
+                  ? mode() === 'create'
+                    ? 'Creating…'
+                    : 'Saving…'
+                  : mode() === 'create'
+                    ? 'Create Hall'
+                    : 'Save Changes'
+              }}
+            </button>
+          </div>
+        </footer>
+      </form>
+    </div>
+  </div>
+</div>

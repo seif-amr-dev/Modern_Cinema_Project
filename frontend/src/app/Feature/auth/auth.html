@@ -6,6 +6,13 @@
       <p>{{ isLoginMode ? 'Sign in to book your favorite movies' : 'Join us to get started' }}</p>
     </div>
     
+    <!-- NEW: Error Banner displayed here if an error exists -->
+    @if (errorMessage) {
+      <div class="error-banner">
+        ⚠️ {{ errorMessage }}
+      </div>
+    }
+    
     @if (isLoginMode) {
       <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="input-group">

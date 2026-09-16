@@ -1,0 +1,73 @@
+@if (movie) {
+
+  <section class="movie-details">
+
+    <div class="movie-poster">
+      <img
+        [src]="movie.poster.url"
+        [alt]="movie.title"
+      />
+    </div>
+
+    <div class="movie-info">
+
+      <p class="eyebrow">{{ movie.status | uppercase }}</p>
+
+      <h1>{{ movie.title }}</h1>
+
+      <div class="movie-meta">
+        <span>{{ movie.ageRating }}</span>
+        <span>{{ movie.duration }} min</span>
+        <span>{{ movie.releaseDate | date:'yyyy' }}</span>
+      </div>
+
+      <div class="genres">
+        @for (genre of movie.genre; track genre) {
+          <span>{{ genre }}</span>
+        }
+      </div>
+
+      <p class="description">
+        {{ movie.description }}
+      </p>
+
+      @if (movie.director) {
+        <p>
+          <strong>Director:</strong>
+          {{ movie.director }}
+        </p>
+      }
+
+      @if (movie.cast?.length) {
+        <div class="cast">
+          <strong>Cast:</strong>
+
+          <div class="cast-list">
+            @for (actor of movie.cast; track actor) {
+              <span>{{ actor }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="rating">
+        <span>★</span>
+        <strong>{{ movie.score }}</strong>
+        <span>/ 10</span>
+      </div>
+
+      <button class="book-btn">
+        Book Tickets
+      </button>
+
+    </div>
+
+  </section>
+
+} @else {
+
+  <div class="loading">
+    <p>Loading movie details...</p>
+  </div>
+
+}

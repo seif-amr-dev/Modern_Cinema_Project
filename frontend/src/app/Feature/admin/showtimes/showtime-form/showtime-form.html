@@ -1,0 +1,293 @@
+<div class="showtime-form">
+  <div
+    class="showtime-form__overlay"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="onEscape()"
+  >
+    <div
+      class="showtime-form__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="showtime-form-title"
+    >
+      <header class="showtime-form__header">
+        <div class="showtime-form__heading">
+          <div class="showtime-form__heading-icon" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polygon points="10 8 16 12 10 16 10 8" />
+            </svg>
+          </div>
+          <div class="showtime-form__heading-text">
+            <span class="showtime-form__eyebrow">
+              @if (mode() === 'edit' && showtime(); as item) {
+                SCHEDULE MASTER // ID: {{ shortId(item._id) }}
+              } @else {
+                SCHEDULE MASTER // NEW SLOT
+              }
+            </span>
+            <h2 id="showtime-form-title" class="showtime-form__title">
+              {{ title() }}
+            </h2>
+            <p class="showtime-form__subtitle">
+              Auditorium assignment and pricing configuration
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="showtime-form__close"
+          (click)="onCancel()"
+          [disabled]="saving()"
+          aria-label="Close dialog"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </header>
+
+      <form
+        class="showtime-form__form"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        novalidate
+      >
+        <div class="showtime-form__field">
+          <label class="showtime-form__label" for="showtime-form-movie">
+            Movie Selection
+          </label>
+          <select
+            class="showtime-form__input"
+            id="showtime-form-movie"
+            formControlName="movie"
+            required
+            [disabled]="movieOptionsMissing()"
+          >
+            <option value="" disabled>
+              {{ movieOptionsMissing() ? 'No movies available' : 'Select a movie' }}
+            </option>
+            @for (movie of movies(); track movie._id) {
+              <option [value]="movie._id">
+                {{ movie.title }} ({{ movie.duration }} min)
+              </option>
+            }
+          </select>
+          <span class="showtime-form__meta">
+            {{ runtimeLabel() }}
+          </span>
+          @if (hasError('movie', 'required')) {
+            <p class="showtime-form__error" role="alert">
+              {{ validationMessage('movie', 'required') }}
+            </p>
+          }
+        </div>
+
+        <div class="showtime-form__field">
+          <label class="showtime-form__label" for="showtime-form-hall">
+            Auditorium Hall
+          </label>
+          <select
+            class="showtime-form__input"
+            id="showtime-form-hall"
+            formControlName="hall"
+            required
+            [disabled]="hallOptionsMissing()"
+          >
+            <option value="" disabled>
+              {{ hallOptionsMissing() ? 'No halls available' : 'Select a hall' }}
+            </option>
+            @for (hall of halls(); track hall._id) {
+              <option [value]="hall._id">
+                {{ hall.name }} ({{ hall.capacity ?? hall.rows * hall.seatsPerRow }} seats)
+              </option>
+            }
+          </select>
+          <span class="showtime-form__meta">
+            @if (selectedHall(); as hall) {
+              Capacity: {{ hall.capacity ?? hall.rows * hall.seatsPerRow }} seats
+            } @else {
+              Select a hall to view capacity
+            }
+          </span>
+          @if (hasError('hall', 'required')) {
+            <p class="showtime-form__error" role="alert">
+              {{ validationMessage('hall', 'required') }}
+            </p>
+          }
+        </div>
+
+        <div class="showtime-form__grid">
+          <div class="showtime-form__field">
+            <label class="showtime-form__label" for="showtime-form-start">
+              Start Date &amp; Time
+            </label>
+            <input
+              class="showtime-form__input showtime-form__input--datetime"
+              id="showtime-form-start"
+              type="datetime-local"
+              formControlName="start"
+              required
+            />
+            @if (hasError('start', 'required')) {
+              <p class="showtime-form__error" role="alert">
+                {{ validationMessage('start', 'required') }}
+              </p>
+            }
+          </div>
+
+          <div class="showtime-form__field">
+            <label class="showtime-form__label" for="showtime-form-end">
+              End Date &amp; Time
+            </label>
+            <input
+              class="showtime-form__input showtime-form__input--datetime"
+              id="showtime-form-end"
+              type="datetime-local"
+              formControlName="end"
+              required
+            />
+            @if (hasError('end', 'required')) {
+              <p class="showtime-form__error" role="alert">
+                {{ validationMessage('end', 'required') }}
+              </p>
+            }
+            @if (hasGroupError('endBeforeStart')) {
+              <p class="showtime-form__error" role="alert">
+                End time must be after the start time.
+              </p>
+            }
+          </div>
+        </div>
+
+        <div
+          class="showtime-form__duration"
+          [class.showtime-form__duration--error]="hasGroupError('durationTooShort')"
+        >
+          <div class="showtime-form__duration-text">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span class="showtime-form__duration-summary">
+              {{ durationSummary() }}
+            </span>
+          </div>
+          <button
+            type="button"
+            class="showtime-form__autofill"
+            (click)="autoFillEnd()"
+            [disabled]="!canAutoFill()"
+          >
+            Auto-fill
+          </button>
+        </div>
+        @if (hasGroupError('durationTooShort')) {
+          <p class="showtime-form__error showtime-form__error--inline" role="alert">
+            Scheduled duration is shorter than the selected movie runtime.
+          </p>
+        }
+
+        <div class="showtime-form__field">
+          <label class="showtime-form__label" for="showtime-form-price">
+            Standard Ticket Price (USD)
+          </label>
+          <div class="showtime-form__price-wrap">
+            <span class="showtime-form__currency" aria-hidden="true">$</span>
+            <input
+              class="showtime-form__input showtime-form__input--price"
+              id="showtime-form-price"
+              type="number"
+              min="0"
+              step="0.5"
+              formControlName="price"
+              required
+            />
+          </div>
+          <span class="showtime-form__meta">
+            Backend rejects negative prices and hall time conflicts.
+          </span>
+          @if (hasError('price', 'required')) {
+            <p class="showtime-form__error" role="alert">
+              {{ validationMessage('price', 'required') }}
+            </p>
+          }
+          @if (hasError('price', 'min')) {
+            <p class="showtime-form__error" role="alert">
+              {{ validationMessage('price', 'min') }}
+            </p>
+          }
+        </div>
+
+        @if (serverError(); as error) {
+          <p class="showtime-form__server-error" role="alert">{{ error }}</p>
+        }
+
+        <footer class="showtime-form__footer">
+          <div class="showtime-form__footer-status">
+            <span class="showtime-form__footer-pulse" aria-hidden="true"></span>
+            <span>
+              {{
+                mode() === 'edit'
+                  ? 'Schedule slot maintained'
+                  : 'New schedule slot'
+              }}
+            </span>
+          </div>
+          <div class="showtime-form__footer-actions">
+            <button
+              type="button"
+              class="showtime-form__button showtime-form__button--ghost"
+              (click)="onCancel()"
+              [disabled]="saving()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="showtime-form__button showtime-form__button--primary"
+              [disabled]="saving()"
+            >
+              {{
+                saving()
+                  ? mode() === 'create'
+                    ? 'Scheduling…'
+                    : 'Updating…'
+                  : mode() === 'create'
+                    ? 'Schedule Showtime'
+                    : 'Update Showtime'
+              }}
+            </button>
+          </div>
+        </footer>
+      </form>
+    </div>
+  </div>
+</div>

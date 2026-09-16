@@ -1,0 +1,56 @@
+<div class="admin-shell">
+
+  @if (sidebarOpen()) {
+    <button
+      class="admin-shell__backdrop"
+      type="button"
+      aria-label="Close navigation"
+      (click)="closeSidebar()"
+    ></button>
+  }
+
+  <app-admin-sidebar [isOpen]="sidebarOpen()" (close)="closeSidebar()" />
+
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button
+        class="admin-topbar__toggle"
+        type="button"
+        aria-label="Toggle navigation"
+        (click)="toggleSidebar()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M4 6h16" />
+          <path d="M4 12h16" />
+          <path d="M4 18h16" />
+        </svg>
+      </button>
+
+      <div class="admin-topbar__status">
+        <span class="admin-topbar__pulse" aria-hidden="true"></span>
+        <span>Cinema Engine: Operational</span>
+      </div>
+    </header>
+
+    <main class="admin-content">
+      <router-outlet />
+    </main>
+
+    <footer class="admin-footer">
+      <span>© Cinema Operations System. Operational telemetry active.</span>
+      <span class="admin-footer__status">
+        <span class="admin-footer__pulse" aria-hidden="true"></span>
+        All Projectors Connected
+      </span>
+    </footer>
+  </div>
+
+</div>

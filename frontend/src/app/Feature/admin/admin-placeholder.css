@@ -1,0 +1,26 @@
+.admin-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  background: rgba(30, 41, 59, 0.4);
+}
+
+.admin-placeholder__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+
+.admin-placeholder__phase {
+  margin: 0.5rem 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}

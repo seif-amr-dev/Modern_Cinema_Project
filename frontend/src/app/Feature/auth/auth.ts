@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 
 @Component({
@@ -7,43 +8,51 @@ import { AuthService } from '../../core/services/auth';
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './auth.html',
-  styleUrl: './auth.css',
+  styleUrl: './auth.css'
 })
 export class Auth {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   isLoginMode = true;
+  errorMessage: string | null = null;
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    password: ['', Validators.required]
   });
 
   signupForm = this.fb.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
   toggleMode() {
     this.isLoginMode = !this.isLoginMode;
-    // Optional: reset forms when switching modes
     this.loginForm.reset();
     this.signupForm.reset();
+    this.errorMessage = null; 
   }
 
   onSubmit() {
+    this.errorMessage = null; 
+
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
-        next: (response) => {
+        next: (response: any) => {
           console.log('Login successful!', response);
-          alert('Login successful!');
+          localStorage.setItem('cinema_token', response.token);
+          this.authService.isLoggedIn.set(true);
+          this.router.navigate(['/']);
         },
-        error: (error) => {
-          console.error('Login failed:', error);
-          alert('Invalid email or password');
-        },
+        error: (err) => {
+          console.error('Login failed:', err);
+          this.errorMessage = err.error?.message || 'Invalid email or password';
+          this.cdr.detectChanges();
+        }
       });
     } else {
       console.warn('Login form is invalid!', this.loginForm.errors);
@@ -51,15 +60,19 @@ export class Auth {
   }
 
   onSignup() {
+    this.errorMessage = null;
     if (this.signupForm.valid) {
       this.authService.signup(this.signupForm.value).subscribe({
         next: (res) => {
           console.log('Account created!', res);
-          this.toggleMode();
+          const userEmail = this.signupForm.value.email;
+          this.router.navigate(['/verify-email'], { queryParams: { email: userEmail } });
         },
         error: (err) => {
           console.error('Signup failed:', err);
-        },
+          this.errorMessage = err.error?.message || 'Signup failed. Please try again.';
+          this.cdr.detectChanges();
+        }
       });
     } else {
       console.warn('Signup form is invalid!', this.signupForm.errors);

@@ -1,0 +1,460 @@
+<section class="movies">
+
+  <header class="movies__header">
+    <div class="movies__heading">
+      <span class="movies__eyebrow">Catalog Index // Screening Master</span>
+      <h1 class="movies__title">Movies</h1>
+      <p class="movies__description">
+        Manage active theatrical inventory, DCP ingestion statuses, and screen runtimes.
+      </p>
+    </div>
+
+    <div class="movies__header-actions">
+      <span class="movies__sync-chip">
+        <span class="movies__sync-pulse" aria-hidden="true"></span>
+        DCP Repository synced
+      </span>
+      <button
+        type="button"
+        class="movies__add-btn"
+        (click)="openCreate()"
+        [disabled]="busy()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 5v14" />
+          <path d="M5 12h14" />
+        </svg>
+        Add Movie
+      </button>
+    </div>
+  </header>
+
+  <div class="movies__stats">
+    <article class="movies__stat">
+      <div class="movies__stat-text">
+        <span class="movies__stat-label">Total in Vault</span>
+        <span class="movies__stat-value">{{ stats()?.total ?? '—' }}</span>
+      </div>
+      <span class="movies__stat-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <path d="M8 21h8" />
+          <path d="M12 17v4" />
+        </svg>
+      </span>
+    </article>
+
+    <article class="movies__stat">
+      <div class="movies__stat-text">
+        <span class="movies__stat-label">Now Showing</span>
+        <span class="movies__stat-value movies__stat-value--primary">{{ stats()?.nowShowing ?? '—' }}</span>
+      </div>
+      <span class="movies__stat-icon movies__stat-icon--primary" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <polygon points="10 8 16 12 10 16 10 8" />
+        </svg>
+      </span>
+    </article>
+
+    <article class="movies__stat">
+      <div class="movies__stat-text">
+        <span class="movies__stat-label">Coming Soon</span>
+        <span class="movies__stat-value movies__stat-value--secondary">{{ stats()?.comingSoon ?? '—' }}</span>
+      </div>
+      <span class="movies__stat-icon movies__stat-icon--secondary" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 3l14 9-14 9V3z" />
+        </svg>
+      </span>
+    </article>
+
+    <article class="movies__stat">
+      <div class="movies__stat-text">
+        <span class="movies__stat-label">Ended</span>
+        <span class="movies__stat-value movies__stat-value--tertiary">{{ stats()?.ended ?? '—' }}</span>
+      </div>
+      <span class="movies__stat-icon movies__stat-icon--tertiary" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <path d="M16 2v4" />
+          <path d="M8 2v4" />
+          <path d="M3 10h18" />
+        </svg>
+      </span>
+    </article>
+  </div>
+
+  <div class="movies__filters">
+    <div class="movies__search">
+      <svg
+        class="movies__search-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        class="movies__search-input"
+        type="search"
+        [value]="searchText()"
+        (input)="onSearchInput($event)"
+        placeholder="Search movie titles, descriptions…"
+        aria-label="Search movies"
+      />
+      @if (searchText()) {
+        <button
+          type="button"
+          class="movies__search-clear"
+          (click)="clearSearch()"
+          aria-label="Clear search"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      }
+    </div>
+
+    <div class="movies__tabs" role="tablist" aria-label="Filter by screening status">
+      @for (tab of statusTabs; track tab.value) {
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="statusFilter() === tab.value"
+          class="movies__tab"
+          [class.movies__tab--active]="statusFilter() === tab.value"
+          (click)="setStatusFilter(tab.value)"
+        >
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <label class="movies__genre-filter">
+      <span class="movies__genre-label">Genre</span>
+      <select
+        class="movies__genre-select"
+        (change)="setGenreFilter($event)"
+        [value]="genreFilter()"
+      >
+        <option value="">All genres</option>
+        @for (genre of genreOptions(); track genre) {
+          <option [value]="genre">{{ genre }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  @if (listLoading()) {
+    <div class="movies__table movies__table--loading" aria-busy="true" aria-label="Loading movies">
+      @for (row of skeletonRows; track row) {
+        <div class="movies__skeleton-row">
+          <div class="movies__skeleton movies__skeleton--poster"></div>
+          <div class="movies__skeleton movies__skeleton--line"></div>
+          <div class="movies__skeleton movies__skeleton--line movies__skeleton--short"></div>
+          <div class="movies__skeleton movies__skeleton--line movies__skeleton--short"></div>
+          <div class="movies__skeleton movies__skeleton--pill"></div>
+          <div class="movies__skeleton movies__skeleton--line movies__skeleton--short"></div>
+          <div class="movies__skeleton movies__skeleton--pill"></div>
+        </div>
+      }
+    </div>
+  } @else if (listError(); as error) {
+    <div class="movies__state" role="alert">
+      <div class="movies__state-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </div>
+      <h3 class="movies__state-title">Couldn't load the movie catalog</h3>
+      <p class="movies__state-message">{{ error }}</p>
+      <button type="button" class="movies__state-action" (click)="loadList()">
+        Try again
+      </button>
+    </div>
+  } @else if (movies().length === 0) {
+    <div class="movies__state">
+      <div class="movies__state-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <path d="M8 21h8" />
+          <path d="M12 17v4" />
+        </svg>
+      </div>
+      <h3 class="movies__state-title">No movies found</h3>
+      <p class="movies__state-message">
+        No titles match your query or the catalog repository is currently unpopulated. Ingest your first feature package.
+      </p>
+      <button
+        type="button"
+        class="movies__state-action movies__state-action--primary"
+        (click)="openCreate()"
+      >
+        Add Movie to Catalog
+      </button>
+    </div>
+  } @else {
+    <div class="movies__table">
+      <div class="movies__table-scroll">
+        <table class="movies__table-grid">
+          <thead>
+            <tr>
+              <th scope="col" class="movies__th-poster">Poster</th>
+              <th scope="col">Title &amp; Director</th>
+              <th scope="col">Genre</th>
+              <th scope="col" class="movies__th-numeric">Duration</th>
+              <th scope="col" class="movies__th-center">Age Rating</th>
+              <th scope="col">Release Date</th>
+              <th scope="col">Status</th>
+              <th scope="col" class="movies__th-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (movie of movies(); track movie._id) {
+              <tr>
+                <td class="movies__poster-cell">
+                  <img
+                    class="movies__poster"
+                    [src]="movie.poster.url"
+                    [alt]="'Poster for ' + movie.title"
+                    loading="lazy"
+                  />
+                </td>
+                <td>
+                  <div class="movies__title-cell">
+                    <span class="movies__title-name">{{ movie.title }}</span>
+                    <span class="movies__title-director">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M15 10l4.55-2.27A2 2 0 0 1 22 9.54v4.92a2 2 0 0 1-2.45 1.81L15 14V10z" />
+                        <rect x="2" y="6" width="14" height="12" rx="2" />
+                      </svg>
+                      {{ movie.director ?? '—' }}
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <div class="movies__genres">
+                    @for (genre of movie.genre; track genre) {
+                      <span class="movies__genre-chip">{{ genre }}</span>
+                    }
+                  </div>
+                </td>
+                <td class="movies__duration">{{ movie.duration }} min</td>
+                <td class="movies__rating-cell">
+                  <span class="movies__rating">{{ movie.ageRating }}</span>
+                </td>
+                <td class="movies__date">
+                  {{ movie.releaseDate | date: 'MMM d, y' }}
+                </td>
+                <td>
+                  <span
+                    class="movies__status"
+                    [class.movies__status--now_showing]="movie.status === 'now_showing'"
+                    [class.movies__status--coming_soon]="movie.status === 'coming_soon'"
+                    [class.movies__status--ended]="movie.status === 'ended'"
+                  >
+                    <span class="movies__status-dot" aria-hidden="true"></span>
+                    {{ statusLabel(movie.status) }}
+                  </span>
+                </td>
+                <td>
+                  <div class="movies__actions">
+                    <button
+                      type="button"
+                      class="movies__action"
+                      (click)="openEdit(movie)"
+                      [disabled]="busy()"
+                      title="Edit movie"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      class="movies__action movies__action--delete"
+                      (click)="confirmDelete(movie)"
+                      [disabled]="busy()"
+                      title="Soft-delete this movie"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="movies__table-footer">
+        <span>
+          Displaying
+          <strong class="movies__count">{{ movies().length }}</strong>
+          of
+          <strong class="movies__count">{{ total() }}</strong>
+          titles
+        </span>
+
+        @if (reloading()) {
+          <span class="movies__reloading" aria-live="polite">
+            <span class="movies__reloading-pulse" aria-hidden="true"></span>
+            Updating results…
+          </span>
+        }
+
+        <div class="movies__pagination">
+          <button
+            type="button"
+            class="movies__page-btn"
+            (click)="goToPage(page() - 1)"
+            [disabled]="!hasPrev()"
+            aria-label="Previous page"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <span class="movies__pagination-info">
+            Page {{ page() }} of {{ pageCount() }}
+          </span>
+          <button
+            type="button"
+            class="movies__page-btn"
+            (click)="goToPage(page() + 1)"
+            [disabled]="!hasNext()"
+            aria-label="Next page"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      </footer>
+    </div>
+  }
+
+  @if (formOpen()) {
+    <app-movie-form
+      [mode]="formMode()"
+      [movie]="editingMovie()"
+      [saving]="formSaving()"
+      [serverError]="formError()"
+      (save)="onFormSubmit($event)"
+      (close)="closeForm()"
+    />
+  }
+
+  @if (deleteTarget(); as movie) {
+    <app-movie-delete
+      [movie]="movie"
+      [busy]="deleteSaving()"
+      [serverError]="deleteError()"
+      (confirm)="runDelete()"
+      (close)="closeDelete()"
+    />
+  }
+
+</section>

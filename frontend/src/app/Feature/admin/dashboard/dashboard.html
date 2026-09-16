@@ -1,0 +1,150 @@
+<section class="dashboard">
+
+  <header class="dashboard__header">
+    <div class="dashboard__heading">
+      <span class="dashboard__eyebrow">Main Operations Frame</span>
+      <h1 class="dashboard__title">Dashboard</h1>
+      <p class="dashboard__description">
+        Operational overview of your catalog, audience, and auditorium network.
+      </p>
+    </div>
+    <span class="dashboard__status-chip">
+      <span class="dashboard__status-pulse" aria-hidden="true"></span>
+      Telemetry Live
+    </span>
+  </header>
+
+  <div class="dashboard__grid">
+
+    <article class="dashboard__card">
+      <div class="dashboard__card-head">
+        <span class="dashboard__card-icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M17 3a2.83 2.83 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+            <path d="m15 5 4 4" />
+          </svg>
+        </span>
+        <span class="dashboard__card-label">Active Users</span>
+      </div>
+
+      @if (activeUsers().loading) {
+        <div class="dashboard__skeleton" aria-label="Loading active users"></div>
+        <span class="dashboard__card-hint">Retrieving active accounts…</span>
+      } @else if (activeUsers().error) {
+        <p class="dashboard__card-error">Could not load user directory.</p>
+        <span class="dashboard__card-hint">Service temporarily unavailable</span>
+      } @else {
+        <p class="dashboard__card-value" aria-live="polite">{{ activeUsers().count }}</p>
+        <span class="dashboard__card-hint">Accounts ready for management</span>
+      }
+    </article>
+
+    <article class="dashboard__card">
+      <div class="dashboard__card-head">
+        <span class="dashboard__card-icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <path d="M7 4v16" />
+            <path d="M17 4v16" />
+            <path d="M3 9h18" />
+            <path d="M3 15h18" />
+          </svg>
+        </span>
+        <span class="dashboard__card-label">Movies</span>
+      </div>
+
+      @if (movies().loading) {
+        <div class="dashboard__skeleton" aria-label="Loading movies"></div>
+        <span class="dashboard__card-hint">Retrieving catalog…</span>
+      } @else if (movies().error) {
+        <p class="dashboard__card-error">Could not load movie catalog.</p>
+        <span class="dashboard__card-hint">Service temporarily unavailable</span>
+      } @else {
+        <p class="dashboard__card-value" aria-live="polite">{{ movies().count }}</p>
+        <span class="dashboard__card-hint">Titles in the active repertoire</span>
+      }
+    </article>
+
+    <article class="dashboard__card">
+      <div class="dashboard__card-head">
+        <span class="dashboard__card-icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2" y="4" width="20" height="14" rx="2" />
+            <path d="M8 21h8" />
+            <path d="M12 17v4" />
+            <path d="M10 8v5l4-2.5V8l-4 0z" />
+          </svg>
+        </span>
+        <span class="dashboard__card-label">Halls</span>
+      </div>
+
+      @if (halls().loading) {
+        <div class="dashboard__skeleton" aria-label="Loading halls"></div>
+        <span class="dashboard__card-hint">Retrieving auditorium status…</span>
+      } @else if (halls().error) {
+        <p class="dashboard__card-error">Could not load hall network.</p>
+        <span class="dashboard__card-hint">Service temporarily unavailable</span>
+      } @else {
+        <p class="dashboard__card-value" aria-live="polite">{{ halls().count }}</p>
+        <span class="dashboard__card-hint">Auditoriums currently operational</span>
+      }
+    </article>
+
+    <article class="dashboard__card">
+      <div class="dashboard__card-head">
+        <span class="dashboard__card-icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+        </span>
+        <span class="dashboard__card-label">Showtimes</span>
+      </div>
+
+      @if (showtimes().loading) {
+        <div class="dashboard__skeleton" aria-label="Loading showtimes"></div>
+        <span class="dashboard__card-hint">Retrieving screening schedule…</span>
+      } @else if (showtimes().error) {
+        <p class="dashboard__card-error">Could not load showtime schedule.</p>
+        <span class="dashboard__card-hint">Service temporarily unavailable</span>
+      } @else {
+        <p class="dashboard__card-value" aria-live="polite">{{ showtimes().count }}</p>
+        <span class="dashboard__card-hint">Active screenings on the board</span>
+      }
+    </article>
+
+  </div>
+
+</section>

@@ -1,8 +1,32 @@
 <nav class="navbar">
-  <div class="logo">ModernCinema</div>
+
+  <a class="logo" routerLink="/">
+    ModernCinema
+  </a>
+
   <div class="nav-links">
-    <a>Now Playing</a>
+    <a routerLink="/">Now Playing</a>
     <a>Theaters</a>
-    <a class="login-btn">Sign In</a>
+
+    <!-- Check if the user is logged in -->
+    @if (authService.isLoggedIn()) {
+      
+      <!-- Logged In View -->
+      <div class="user-menu">
+        <span class="user-badge">👤 My Account</span>
+        <button class="logout-btn" (click)="authService.logout()" routerLink="/login">
+          Logout
+        </button>
+      </div>
+
+    } @else {
+      
+      <!-- Logged Out View -->
+      <a class="login-btn" routerLink="/login">
+        Sign In
+      </a>
+      
+    }
   </div>
+
 </nav>

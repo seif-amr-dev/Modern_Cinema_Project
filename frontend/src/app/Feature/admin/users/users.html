@@ -1,0 +1,404 @@
+<section class="users">
+
+  <header class="users__header">
+    <div class="users__heading">
+      <span class="users__eyebrow">Access Control // Directory</span>
+      <h1 class="users__title">Users</h1>
+      <p class="users__description">
+        Manage cinema accounts and operator privileges.
+      </p>
+    </div>
+
+    <div class="users__header-actions">
+      <span class="users__sync-chip">
+        <span class="users__sync-pulse" aria-hidden="true"></span>
+        {{ users().length }}
+        {{
+          filter() === 'deleted'
+            ? 'Deleted Accounts'
+            : filter() === 'all'
+              ? 'Total Accounts'
+              : 'Active Accounts'
+        }}
+      </span>
+      <button
+        type="button"
+        class="users__add-btn"
+        (click)="openCreate()"
+        [disabled]="busy()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <line x1="19" y1="8" x2="19" y2="14" />
+          <line x1="22" y1="11" x2="16" y2="11" />
+        </svg>
+        Add User
+      </button>
+    </div>
+  </header>
+
+  <p class="users__scope">
+    {{
+      filter() === 'deleted'
+        ? 'This directory shows soft-deleted accounts only. Restoring an account preserves its data, role and active status.'
+        : filter() === 'all'
+          ? 'This directory shows every account across all states — active, banned and soft-deleted.'
+          : 'This directory lists active, non-deleted accounts only. Banned or deleted accounts are excluded and drop out automatically.'
+    }}
+  </p>
+
+  <div class="users__filters" role="tablist" aria-label="User directory filter">
+    @for (item of filters; track item.value) {
+      <button
+        type="button"
+        class="users__filter"
+        [class.users__filter--active]="filter() === item.value"
+        (click)="setFilter(item.value)"
+        role="tab"
+        [attr.aria-selected]="filter() === item.value"
+        [disabled]="busy() || loading()"
+      >
+        {{ item.label }}
+      </button>
+    }
+  </div>
+
+  <div class="users__stats">
+    <article class="users__stat">
+      <div class="users__stat-text">
+        <span class="users__stat-label">
+          {{
+            filter() === 'deleted'
+              ? 'Deleted Accounts'
+              : filter() === 'all'
+                ? 'All Accounts'
+                : 'Active Accounts'
+          }}
+        </span>
+        <span class="users__stat-value">{{ users().length }}</span>
+      </div>
+      <span class="users__stat-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 13c0 3.314-3.582 6-8 6s-8-2.686-8-6 3.582-6 8-6 8 2.686 8 6z" />
+          <path d="M4 13v6c0 1.657 3.582 3 8 3s8-1.343 8-3v-6" />
+        </svg>
+      </span>
+    </article>
+
+    <article class="users__stat">
+      <div class="users__stat-text">
+        <span class="users__stat-label">Console Admins</span>
+        <span class="users__stat-value">{{ adminCount() }}</span>
+      </div>
+      <span class="users__stat-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      </span>
+    </article>
+
+    <article class="users__stat">
+      <div class="users__stat-text">
+        <span class="users__stat-label">Patron Accounts</span>
+        <span class="users__stat-value">{{ memberCount() }}</span>
+      </div>
+      <span class="users__stat-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </span>
+    </article>
+  </div>
+
+  @if (loading()) {
+    <div class="users__table users__table--loading" aria-busy="true" aria-label="Loading users">
+      @for (row of skeletonRows; track row) {
+        <div class="users__skeleton-row">
+          <div class="users__skeleton users__skeleton--avatar"></div>
+          <div class="users__skeleton users__skeleton--line"></div>
+          <div class="users__skeleton users__skeleton--line users__skeleton--short"></div>
+          <div class="users__skeleton users__skeleton--line users__skeleton--short"></div>
+          <div class="users__skeleton users__skeleton--pill"></div>
+          <div class="users__skeleton users__skeleton--line"></div>
+        </div>
+      }
+    </div>
+  } @else if (loadError(); as error) {
+    <div class="users__state" role="alert">
+      <div class="users__state-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </div>
+      <h3 class="users__state-title">Couldn't load the user directory</h3>
+      <p class="users__state-message">{{ error }}</p>
+      <button
+        type="button"
+        class="users__state-action"
+        (click)="loadUsers()"
+      >
+        Try again
+      </button>
+    </div>
+  } @else if (users().length === 0) {
+    <div class="users__state">
+      <div class="users__state-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      </div>
+      <h3 class="users__state-title">
+        {{
+          filter() === 'deleted'
+            ? 'No deleted users'
+            : filter() === 'all'
+              ? 'No users found'
+              : 'No active users'
+        }}
+      </h3>
+      <p class="users__state-message">
+        {{
+          filter() === 'deleted'
+            ? 'The deleted accounts directory is currently empty.'
+            : filter() === 'all'
+              ? 'The directory returned zero accounts.'
+              : 'The directory returned zero active accounts. Create one to get started.'
+        }}
+      </p>
+      @if (filter() !== 'deleted') {
+        <button
+          type="button"
+          class="users__state-action users__state-action--primary"
+          (click)="openCreate()"
+        >
+          Add User
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="users__table">
+      <div class="users__table-scroll">
+        <table class="users__table-grid">
+          <thead>
+            <tr>
+              <th scope="col">User Profile</th>
+              <th scope="col">Email Address</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Role</th>
+              <th scope="col">Status</th>
+              <th scope="col" class="users__th-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user._id) {
+              <tr>
+                <td>
+                  <div class="users__profile">
+                    @if (user.image) {
+                      <img
+                        class="users__avatar"
+                        [src]="user.image"
+                        [alt]="'Profile photo of ' + user.name"
+                      />
+                    } @else {
+                      <span class="users__avatar users__avatar--fallback" aria-hidden="true">
+                        {{ initials(user.name) }}
+                      </span>
+                    }
+                    <div class="users__profile-text">
+                      <span class="users__name">{{ user.name }}</span>
+                      <span class="users__id">#{{ shortId(user._id) }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="users__email">{{ user.email }}</td>
+                <td class="users__phone">{{ user.phone ?? '—' }}</td>
+                <td>
+                  <select
+                    class="users__role-select"
+                    [class.users__role-select--admin]="user.role === 'admin'"
+                    [value]="user.role"
+                    [disabled]="busy() || user.isDeleted"
+                    (change)="confirmRoleChange(user, roleSelect)"
+                    #roleSelect
+                    [attr.aria-label]="'Role for ' + user.name"
+                  >
+                    @for (role of roleOptions; track role) {
+                      <option [value]="role">
+                        {{ role === 'admin' ? 'Admin' : 'User' }}
+                      </option>
+                    }
+                  </select>
+                </td>
+                <td>
+                  @if (user.isDeleted) {
+                    <span class="users__status users__status--deleted">
+                      <span class="users__status-dot" aria-hidden="true"></span>
+                      Deleted
+                    </span>
+                  } @else if (!user.isActive) {
+                    <span class="users__status users__status--banned">
+                      <span class="users__status-dot" aria-hidden="true"></span>
+                      Banned
+                    </span>
+                  } @else {
+                    <span class="users__status">
+                      <span class="users__status-dot" aria-hidden="true"></span>
+                      Active
+                    </span>
+                  }
+                </td>
+                <td>
+                  <div class="users__actions">
+                    @if (user.isDeleted) {
+                      <button
+                        type="button"
+                        class="users__action users__action--restore"
+                        (click)="confirmForRestore(user)"
+                        [disabled]="busy()"
+                        title="Restore this deleted account"
+                      >
+                        Restore
+                      </button>
+                    } @else {
+                      <button
+                        type="button"
+                        class="users__action"
+                        (click)="openEdit(user)"
+                        [disabled]="busy()"
+                        title="Edit account"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        class="users__action users__action--ban"
+                        (click)="confirmForBan(user)"
+                        [disabled]="busy()"
+                        title="Restrict patron account"
+                      >
+                        Ban
+                      </button>
+                      <button
+                        type="button"
+                        class="users__action users__action--delete"
+                        (click)="confirmForDelete(user)"
+                        [disabled]="busy()"
+                        title="Soft-delete this account"
+                      >
+                        Delete
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="users__table-footer">
+        <span>
+          Showing
+          <strong class="users__count">{{ users().length }}</strong>
+          {{
+            filter() === 'deleted'
+              ? 'deleted accounts'
+              : filter() === 'all'
+                ? 'accounts'
+                : 'active accounts'
+          }}
+        </span>
+        <span class="users__table-note">
+          {{
+            filter() === 'deleted'
+              ? 'Soft-deleted accounts no longer appear in the active directory.'
+              : filter() === 'all'
+                ? 'All accounts across every state — active, banned and deleted.'
+                : 'Active, non-deleted accounts only — no remote pagination.'
+          }}
+        </span>
+      </div>
+    </div>
+  }
+
+  @if (formOpen()) {
+    <app-user-form
+      [mode]="formMode()"
+      [user]="editingUser()"
+      [saving]="formSaving()"
+      [serverError]="formError()"
+      (save)="onFormSubmit($event)"
+      (close)="closeForm()"
+    />
+  }
+
+  @if (confirmState(); as state) {
+    <app-confirm-action
+      [title]="state.title"
+      [message]="state.message"
+      [confirmLabel]="state.confirmLabel"
+      [variant]="state.variant"
+      [busy]="confirmSaving()"
+      [serverError]="confirmError()"
+      (confirm)="runConfirmAction()"
+      (close)="closeConfirm()"
+    />
+  }
+
+</section>

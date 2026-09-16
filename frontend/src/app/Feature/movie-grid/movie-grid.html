@@ -1,0 +1,71 @@
+<div class="movie-browser">
+
+  <div class="filters">
+
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Search for a movie..."
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="searchMovies()"
+      />
+
+      <button (click)="searchMovies()">
+        Search
+      </button>
+    </div>
+
+    <select
+      [(ngModel)]="selectedGenre"
+      (change)="filterMovies()"
+    >
+      <option value="">All Genres</option>
+      <option value="Action">Action</option>
+      <option value="Comedy">Comedy</option>
+      <option value="Drama">Drama</option>
+      <option value="Horror">Horror</option>
+      <option value="Romance">Romance</option>
+      <option value="Sci-Fi">Sci-Fi</option>
+      <option value="Animation">Animation</option>
+    </select>
+
+    <select
+      [(ngModel)]="selectedStatus"
+      (change)="filterMovies()"
+    >
+      <option value="">All Movies</option>
+      <option value="now_showing">Now Showing</option>
+      <option value="coming_soon">Coming Soon</option>
+      <option value="ended">Ended</option>
+    </select>
+
+    <button
+      class="clear-btn"
+      (click)="clearFilters()"
+    >
+      Clear
+    </button>
+
+  </div>
+
+
+  @if (movies.length > 0) {
+
+    <div class="movie-grid">
+
+      @for (movie of movies; track movie._id) {
+        <app-movie-card [movie]="movie"></app-movie-card>
+      }
+
+    </div>
+
+  } @else {
+
+    <div class="no-movies">
+      <h3>No movies found</h3>
+      <p>Try changing your search or filters.</p>
+    </div>
+
+  }
+
+</div>

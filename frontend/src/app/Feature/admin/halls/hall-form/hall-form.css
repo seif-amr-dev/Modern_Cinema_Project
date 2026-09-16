@@ -1,0 +1,466 @@
+.hall-form {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.hall-form__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  animation: hall-form-fade 0.18s ease-out;
+}
+
+.hall-form__panel {
+  width: 100%;
+  max-width: 640px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #131b2e;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.6);
+  animation: hall-form-slide 0.22s ease-out;
+}
+
+/* Header */
+.hall-form__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #060e20;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.hall-form__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.hall-form__heading-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--accent-gold);
+}
+
+.hall-form__heading-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.hall-form__heading-text {
+  min-width: 0;
+}
+
+.hall-form__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hall-form__subtitle {
+  margin: 0.125rem 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.hall-form__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.hall-form__close:hover:not(:disabled) {
+  color: var(--text-main);
+  background: rgba(30, 41, 59, 0.9);
+}
+
+.hall-form__close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hall-form__close svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Scrollable form body */
+.hall-form__form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.hall-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.hall-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.hall-form__field--span {
+  grid-column: 1 / -1;
+}
+
+.hall-form__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.hall-form__input {
+  height: 38px;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: #0f172a;
+  color: var(--text-main);
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hall-form__input::placeholder {
+  color: #64748b;
+}
+
+.hall-form__input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.hall-form__input--number {
+  font-variant-numeric: tabular-nums;
+}
+
+.hall-form__number-wrap {
+  position: relative;
+}
+
+.hall-form__number-wrap .hall-form__input {
+  width: 100%;
+}
+
+.hall-form__number-unit {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.hall-form__error {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: #f87171;
+}
+
+.hall-form__server-error {
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+/* Calculated preview */
+.hall-form__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  background: rgba(6, 14, 32, 0.6);
+}
+
+.hall-form__preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hall-form__preview-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.hall-form__preview-badge {
+  padding: 2px 8px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--accent-gold);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.hall-form__preview-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.hall-form__preview-total-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+}
+
+.hall-form__preview-total-number {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.hall-form__preview-total-unit {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.hall-form__preview-grid-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.hall-form__preview-screen {
+  width: 14rem;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    rgba(245, 158, 11, 0.2),
+    #f59e0b,
+    rgba(245, 158, 11, 0.2)
+  );
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+.hall-form__preview-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.5);
+}
+
+.hall-form__preview-grid {
+  display: grid;
+  gap: 5px;
+}
+
+.hall-form__seat {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: rgba(57, 72, 90, 0.85);
+}
+
+.hall-form__preview-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.hall-form__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.hall-form__legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: rgba(57, 72, 90, 0.85);
+}
+
+/* Footer */
+.hall-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.5rem;
+  background: #060e20;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.hall-form__footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.hall-form__footer-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.6);
+  animation: hall-form-pulse 2s ease-in-out infinite;
+}
+
+.hall-form__footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hall-form__button {
+  height: 36px;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.hall-form__button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.hall-form__button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.hall-form__button--ghost {
+  background: rgba(30, 41, 59, 0.9);
+  color: var(--text-main);
+}
+
+.hall-form__button--ghost:hover:not(:disabled) {
+  background: #243248;
+}
+
+.hall-form__button--primary {
+  background: var(--accent-gold);
+  color: #0f172a;
+  font-weight: 600;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.3);
+}
+
+.hall-form__button--primary:hover:not(:disabled) {
+  background: var(--accent-gold-hover);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+/* Animations */
+@keyframes hall-form-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hall-form-slide {
+  from {
+    opacity: 0;
+    transform: translateX(48px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes hall-form-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Mobile: full-width */
+@media (max-width: 767px) {
+  .hall-form__panel {
+    max-width: none;
+  }
+
+  .hall-form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hall-form__form {
+    padding: 1rem;
+  }
+}

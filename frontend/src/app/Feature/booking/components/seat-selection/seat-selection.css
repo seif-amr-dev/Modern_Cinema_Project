@@ -1,0 +1,44 @@
+.seat{
+  width: 35px;
+  height: 35px;
+  border-radius: 6px;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+  cursor: pointer;
+  font-size:12px;
+  transition:all 0.2s;
+}
+.seat-grid{
+  display: grid;
+  grid-template-columns:repeat(10, 1fr);
+  gap:8px;
+  max-width:500px;
+}
+.seat.available{
+  background-color: #e0e0e0;
+  border:1px solid #999;
+}
+.seat.vip.available{
+  background-color: #fff3cd;
+  border:1px solid #d4a017;
+}
+.seat.selected{
+  background-color: #4caf50;
+  color: white;
+  transform: scale(1.1);
+}
+.seat.booked{
+  background-color: #757575;
+  color: #bbb;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+.status-msg {
+  padding: 12px;
+  font-size: 14px;
+  color: #666;
+}
+.status-msg.error {
+  color: #c62828;
+}
