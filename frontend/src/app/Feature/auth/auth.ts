@@ -47,7 +47,13 @@ export class Auth {
         console.log('Login successful!', response);
         localStorage.setItem('cinema_token', response.token);
         this.authService.isLoggedIn.set(true);
-        this.router.navigate(['/']);
+        
+        const payload = this.authService.getPayloadFromToken();
+        if (payload && payload.role === 'admin') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/']);
+        }
         
       } catch (err: any) {
         console.error('Login failed:', err);
