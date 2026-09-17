@@ -1,24 +1,36 @@
-@if (!confirmedTicket) {
-  <div class="booking-page">
-    <h1>Select your seats</h1>
+<div class="booking-overlay">
+  <div class="booking-container">
+    @if (!confirmedTicket) {
+      <div class="page-header">
+        <h1>Select Your Seats</h1>
+        <p>Pick the best seats in the house</p>
+      </div>
 
-    <!-- Passes the showId down to the seat grid -->
-    <app-seat-selection [showId]="showId"></app-seat-selection>
-    
-    <app-checkout-summary></app-checkout-summary>
+      <div class="booking-content">
+        <div class="left-panel">
+          <!-- Passes the showId down to the seat grid -->
+          <app-seat-selection [showId]="showId"></app-seat-selection>
+        </div>
+        
+        <div class="right-panel">
+          <app-checkout-summary></app-checkout-summary>
 
-    <button
-      class="confirm-btn"
-      [disabled]="((selectedCount$ | async) ?? 0) === 0"
-      (click)="onConfirm()">
-      Confirm booking
-    </button>
+          <button
+            class="confirm-btn"
+            [disabled]="((selectedCount$ | async) ?? 0) === 0"
+            (click)="onConfirm()">
+            Confirm Booking
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="page-header">
+        <h1>Booking Confirmed!</h1>
+        <p>Your digital ticket is ready</p>
+      </div>
+      
+      <!-- Passes the completed Ticket object to the success screen -->
+      <app-digital-ticket [ticket]="confirmedTicket"></app-digital-ticket>
+    }
   </div>
-} @else {
-  <div class="booking-page">
-    <h1>Booking confirmed!</h1>
-    
-    <!-- Passes the completed Ticket object to the success screen -->
-    <app-digital-ticket [ticket]="confirmedTicket"></app-digital-ticket>
-  </div>
-}
+</div>

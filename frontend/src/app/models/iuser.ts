@@ -5,5 +5,8 @@ export interface IUser {
   password?: string;
   confirmOTP?: string;
   image?: string;
+  phone?: string;
+  dateOfBirth?: string | Date;
+  gender?: 'male' | 'female';
   role: string;
 }

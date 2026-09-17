@@ -71,3 +71,47 @@
   opacity: 0.85;
   transform: translateY(-1px);
 }
+
+.showtimes-section {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #1e293b;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.times-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.time-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-btn:hover {
+  background: var(--accent-gold, #f5c518);
+  color: #020617;
+  border-color: var(--accent-gold, #f5c518);
+  transform: translateY(-1px);
+}
+
+.loading-text, .no-times {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 5px 0;
+}

@@ -20,8 +20,15 @@ export const routes: Routes = [
     canActivate: [authGuard] 
   },
   { path: 'login', component: Auth },
-  { path: 'verify-email', component: VerifyEmail }
-  ,
+  { path: 'verify-email', component: VerifyEmail },
+  { 
+    path: 'forget-password', 
+    loadComponent: () => import('./Feature/auth/forget-password/forget-password').then(m => m.ForgetPassword)
+  },
+  { 
+    path: 'reset-password/:token', 
+    loadComponent: () => import('./Feature/auth/reset-password/reset-password').then(m => m.ResetPassword)
+  },
   { 
   path: 'profile', 
   component:Profile,

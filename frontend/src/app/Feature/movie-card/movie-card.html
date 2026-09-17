@@ -22,11 +22,32 @@
         View Details
       </a>
 
-<button class="book-btn" [routerLink]="['/book', movie._id]">
-  Book Tickets
+<button class="book-btn" (click)="toggleShowtimes()">
+  {{ isShowingShowtimes ? 'Hide Showtimes' : 'Book Tickets' }}
 </button>
 
     </div>
+
+    <!-- Showtimes Section -->
+    @if (isShowingShowtimes) {
+      <div class="showtimes-section">
+        @if (isLoadingShowtimes) {
+          <p class="loading-text">Loading...</p>
+        } @else if (showtimes && showtimes.length > 0) {
+          <div class="times-grid">
+            @for (showtime of showtimes; track showtime._id) {
+              <button 
+                class="time-btn" 
+                [routerLink]="['/book', showtime._id]">
+                {{ showtime.hall?.name }} - {{ showtime.startTime | date:'shortTime' }}
+              </button>
+            }
+          </div>
+        } @else {
+          <p class="no-times">No showtimes available.</p>
+        }
+      </div>
+    }
 
   </div>
 

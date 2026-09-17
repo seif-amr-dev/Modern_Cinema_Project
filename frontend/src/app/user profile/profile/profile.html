@@ -5,36 +5,125 @@
       <div class="spinner"></div>
       <p>Loading your profile...</p>
     </div>
-  } @else if (errorMessage()) {
-    <div class="error-banner">
-      ⚠️ {{ errorMessage() }}
-    </div>
   } @else if (user()) {
     <div class="profile-card">
       
-      <div class="profile-header">
-        <div class="avatar-circle">
-          {{ user()?.name?.charAt(0) | uppercase }}
+      @if (successMessage()) {
+        <div class="success-banner" style="margin-bottom: 20px;">
+          ✅ {{ successMessage() }}
         </div>
+      }
+
+      @if (errorMessage()) {
+        <div class="error-banner" style="margin-bottom: 20px;">
+          ⚠️ {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="profile-header">
+        @if (user()?.image) {
+          <img [src]="user()?.image" alt="Profile Image" class="avatar-img" />
+        } @else {
+          <div class="avatar-circle">
+            {{ user()?.name?.charAt(0) | uppercase }}
+          </div>
+        }
         <h2>{{ user()?.name }}</h2>
         <span class="user-role">{{ (user()?.role || 'Customer') | titlecase }}</span>
+        
+        @if (!isEditing()) {
+          <button class="edit-btn" (click)="toggleEdit()">Edit Profile</button>
+        }
       </div>
 
       <div class="profile-body">
-        <div class="info-group">
-          <label>Email Address</label>
-          <div class="info-value">{{ user()?.email }}</div>
-        </div>
+        
+        @if (!isEditing()) {
+          <!-- VIEW MODE -->
+          <div class="info-group">
+            <label>Full Name</label>
+            <div class="info-value">{{ user()?.name || '-' }}</div>
+          </div>
+          
+          <div class="info-group">
+            <label>Email Address</label>
+            <div class="info-value">{{ user()?.email || '-' }}</div>
+          </div>
+          
+          <div class="info-group">
+            <label>Phone Number</label>
+            <div class="info-value">{{ user()?.phone || '-' }}</div>
+          </div>
+          
+          <div class="info-group">
+            <label>Date of Birth</label>
+            <div class="info-value">{{ user()?.dateOfBirth ? (user()?.dateOfBirth | date:'longDate') : '-' }}</div>
+          </div>
+          
+          <div class="info-group">
+            <label>Gender</label>
+            <div class="info-value">{{ (user()?.gender | titlecase) || '-' }}</div>
+          </div>
 
-        <div class="info-group">
-          <label>Account Status</label>
-          <div class="info-value status-active">Verified</div>
-        </div>
+          <div class="info-group">
+            <label>Account Status</label>
+            <div class="info-value status-active">Verified</div>
+          </div>
+        } @else {
+          <!-- EDIT MODE -->
+          <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="onSave()">
+            
+            <div class="form-group">
+              <label>Profile Image</label>
+              <input type="file" (change)="onImageSelected($event)" accept="image/*" class="file-input" />
+            </div>
+
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input id="name" type="text" formControlName="name" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input id="email" type="email" formControlName="email" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input id="phone" type="text" formControlName="phone" class="form-control" />
+            </div>
+
+            <div class="form-group row-group">
+              <div class="col">
+                <label for="dateOfBirth">Date of Birth</label>
+                <input id="dateOfBirth" type="date" formControlName="dateOfBirth" class="form-control" />
+              </div>
+              <div class="col">
+                <label for="gender">Gender</label>
+                <select id="gender" formControlName="gender" class="form-control">
+                  <option value="" disabled>Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="cancel-btn" (click)="toggleEdit()">Cancel</button>
+              <button type="submit" class="save-btn" [disabled]="profileForm.invalid || isSaving() || isUploading()">
+                {{ (isSaving() || isUploading()) ? 'Saving...' : 'Save Changes' }}
+              </button>
+            </div>
+          </form>
+        }
+
       </div>
 
-      <div class="profile-footer">
-        <button class="logout-btn" (click)="onLogout()">Sign Out</button>
-      </div>
+      @if (!isEditing()) {
+        <div class="profile-footer">
+          <button class="logout-btn" (click)="onLogout()">Sign Out</button>
+        </div>
+      }
       
     </div>
   }

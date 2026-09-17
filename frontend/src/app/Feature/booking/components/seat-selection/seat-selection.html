@@ -1,15 +1,53 @@
-<div *ngIf="loading$ | async" class="status-msg">Loading seats...</div>
-
-<div *ngIf="error$ | async as error" class="status-msg error">{{ error }}</div>
-
-<div class="seat-grid" *ngIf="!(loading$ | async) && !(error$ | async)">
-  <div *ngFor="let seat of (seats$ | async)"
-       class="seat"
-       [class.available]="seat.status === 'available'"
-       [class.booked]="seat.status === 'booked'"
-       [class.selected]="seat.status === 'selected'"
-       [class.vip]="seat.type === 'vip'"
-       (click)="onSeatClick(seat)">
-    {{ seat.row }}{{ seat.number }}
+<div class="seat-selection-container">
+  
+  <div *ngIf="loading$ | async" class="status-msg">
+    Loading seats...
   </div>
+
+  <div *ngIf="error$ | async as error" class="status-msg error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!(loading$ | async) && !(error$ | async)" style="width: 100%">
+    
+    <!-- Screen Indicator -->
+    <div class="screen-indicator">
+      <span>Cinema Screen</span>
+    </div>
+
+    <!-- Seat Grid -->
+    <div class="seat-grid">
+      <div *ngFor="let seat of (seats$ | async)"
+           class="seat"
+           [class.available]="seat.status === 'available'"
+           [class.booked]="seat.status === 'booked'"
+           [class.selected]="seat.status === 'selected'"
+           [class.vip]="seat.type === 'vip'"
+           (click)="onSeatClick(seat)">
+        {{ seat.row }}{{ seat.number }}
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="seat-legend">
+      <div class="legend-item">
+        <div class="legend-box available"></div>
+        <span>Available</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box selected"></div>
+        <span>Selected</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box booked"></div>
+        <span>Booked</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box vip available"></div>
+        <span>VIP</span>
+      </div>
+    </div>
+    
+  </div>
+
 </div>

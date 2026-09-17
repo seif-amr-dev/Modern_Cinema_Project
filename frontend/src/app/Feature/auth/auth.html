@@ -25,6 +25,10 @@
           <label for="password">Password</label>
         </div>
         
+        <div class="forgot-password-link" style="text-align: right; margin-top: -10px; margin-bottom: 15px;">
+          <a routerLink="/forget-password" style="color: var(--accent); font-size: 0.9rem; text-decoration: none; cursor: pointer;">Forgot Password?</a>
+        </div>
+        
         <button type="submit" class="auth-btn" [disabled]="loginForm.invalid">
           <span>Sign In</span>
           <div class="btn-glow"></div>

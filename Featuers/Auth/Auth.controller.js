@@ -145,7 +145,7 @@ exports.forgetPassword = catchAsync(async (req,res,next) => {
 
     await findUser.save()
     console.log(resetToken)
-    const link = `http://localhost:8000/auth/reset-password/${resetToken}`
+    const link = `http://localhost:4200/reset-password/${resetToken}`
   await SendEmail(
   email,
   "Reset Password",

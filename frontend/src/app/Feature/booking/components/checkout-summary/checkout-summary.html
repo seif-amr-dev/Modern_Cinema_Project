@@ -1,12 +1,23 @@
 <div class="checkout-box">
   <h3>Booking Summary</h3>
-  <p>Selected seats: {{ (selectedSeats$ | async)?.length || 0 }}</p>
+  
+  <div class="summary-stat">
+    <span>Selected Seats</span>
+    <span>{{ (selectedSeats$ | async)?.length || 0 }}</span>
+  </div>
 
   <ul class="seats-list">
     <li *ngFor="let seat of (selectedSeats$ | async)">
-      {{ seat.row }}{{ seat.number }} — {{ seat.price }} EGP
+      <div class="seat-label">
+        <span class="seat-badge">{{ seat.row }}{{ seat.number }}</span>
+        <span *ngIf="seat.type === 'vip'" style="color: #f5c518; font-size: 0.75rem;">VIP</span>
+      </div>
+      <span>{{ seat.price }} EGP</span>
     </li>
   </ul>
 
-  <p class="total">Total: {{ totalPrice$ | async }} EGP</p>
+  <div class="total">
+    <span>Total Amount</span>
+    <span class="total-amount">{{ totalPrice$ | async }} EGP</span>
+  </div>
 </div>

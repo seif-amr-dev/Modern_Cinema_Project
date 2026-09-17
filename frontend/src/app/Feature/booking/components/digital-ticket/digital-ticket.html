@@ -1,17 +1,40 @@
-<div class="ticket-card" *ngIf="ticket">
-  <div class="ticket-header">
-    <h2>{{ ticket.movieTitle }}</h2>
-    <span class="ticket-id">#{{ ticket.bookingId }}</span>
-  </div>
-  <div class="ticket-body">
-    <p><strong>Hall:</strong> {{ ticket.hallName }}</p>
-    <p><strong>Show time:</strong> {{ ticket.showTime }}</p>
-    <p><strong>Seats:</strong>
-      <span *ngFor="let seat of ticket.seats">{{ seat.row }}{{ seat.number }}</span>
-    </p>
-    <p class="total"><strong>Total:</strong> {{ ticket.totalPrice }} EGP</p>
-  </div>
-  <div class="ticket-footer">
-    <div class="qr-placeholder">QR</div>
+<div class="ticket-wrapper" *ngIf="ticket">
+  <div class="ticket-card">
+    
+    <div class="ticket-header">
+      <h2>{{ ticket.movieTitle }}</h2>
+      <span class="ticket-id">Booking ID: #{{ ticket.bookingId }}</span>
+    </div>
+    
+    <div class="ticket-body">
+      <div class="info-row">
+        <span class="info-label">Hall / Screen</span>
+        <span class="info-value">{{ ticket.hallName }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="info-label">Date & Time</span>
+        <span class="info-value">{{ ticket.showTime | date:'medium' }}</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="info-label">Seats</span>
+        <div class="seats-container">
+          <span class="seat-tag" *ngFor="let seat of ticket.seats">{{ seat.row }}{{ seat.number }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="ticket-footer">
+      <div class="total-section">
+        <span class="info-label">Total Paid</span>
+        <span class="total-amount">{{ ticket.totalPrice }} EGP</span>
+      </div>
+      
+      <div class="qr-placeholder">
+        <div class="qr-code"></div>
+      </div>
+    </div>
+    
   </div>
 </div>
