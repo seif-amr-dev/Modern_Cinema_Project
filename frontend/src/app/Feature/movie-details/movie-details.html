@@ -56,9 +56,24 @@
         <span>/ 10</span>
       </div>
 
-      <button class="book-btn">
-        Book Tickets
-      </button>
+<div class="showtimes-section">
+        <h3>Select a Showtime</h3>
+        
+        @if (showtimes && showtimes.length > 0) {
+          <div class="times-grid">
+            @for (showtime of showtimes; track showtime._id) {
+              <!-- THIS is the magic line. It explicitly grabs the SHOWTIME ID, not the Movie ID -->
+              <button 
+                class="time-btn book-btn" 
+                [routerLink]="['/book', showtime._id]">
+                {{ showtime.startTime | date:'shortTime' }}
+              </button>
+            }
+          </div>
+        } @else {
+          <p class="no-times">No showtimes currently available for this movie.</p>
+        }
+      </div>
 
     </div>
 

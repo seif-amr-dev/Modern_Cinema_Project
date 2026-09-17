@@ -10,6 +10,7 @@ export class MovieService {
   private http = inject(HttpClient);
 
   private apiUrl = 'http://localhost:3000/movie';
+  private showtimeUrl = 'http://localhost:3000/showtime'; 
 
   getMovies(
     search?: string,
@@ -40,5 +41,10 @@ export class MovieService {
 
   getMovieById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+getShowtimesByMovieId(movieId: string): Observable<any> {
+    let params = new HttpParams().set('movie', movieId);
+    return this.http.get<any>('http://localhost:3000/showtime', { params });
   }
 }

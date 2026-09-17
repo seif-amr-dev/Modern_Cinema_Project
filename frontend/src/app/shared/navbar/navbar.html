@@ -7,21 +7,17 @@
   <div class="nav-links">
     <a routerLink="/">Now Playing</a>
     <a>Theaters</a>
-
-    <!-- Check if the user is logged in -->
     @if (authService.isLoggedIn()) {
       
       <!-- Logged In View -->
       <div class="user-menu">
-        <span class="user-badge">👤 My Account</span>
+        <button class="user-badge" routerLink="/profile">👤 My Account</button>
         <button class="logout-btn" (click)="authService.logout()" routerLink="/login">
           Logout
         </button>
       </div>
 
     } @else {
-      
-      <!-- Logged Out View -->
       <a class="login-btn" routerLink="/login">
         Sign In
       </a>

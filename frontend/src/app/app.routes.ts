@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { Auth } from './Feature/auth/auth';
 import { VerifyEmail } from './Feature/verify-email/verify-email';
+import { authGuard } from './guards/auth-guard';
+import { BookingPage } from './Feature/booking/pages/booking-page/booking-page';
+import { Profile } from './user profile/profile/profile';
 
 export const routes: Routes = [
   { 
@@ -11,6 +14,17 @@ export const routes: Routes = [
     path: 'movie/:id', 
     loadComponent: () => import('./Feature/movie-details/movie-details').then(m => m.MovieDetails) 
   },
+  { 
+    path: 'book/:showId', 
+    component:BookingPage,
+    canActivate: [authGuard] 
+  },
   { path: 'login', component: Auth },
   { path: 'verify-email', component: VerifyEmail }
+  ,
+  { 
+  path: 'profile', 
+  component:Profile,
+  canActivate: [authGuard] 
+}
 ];

@@ -1,18 +1,22 @@
-import { Service, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { BookingRequest, Ticket, Seat } from '../models/seat.model';
 
-@Service()
+@Injectable({
+  providedIn: 'root'
+})
 export class BookingApi {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:5000/api/v1';
+  private baseUrl = 'http://localhost:3000/booking';
 
-  getSeatsForShowtime(showtimeId: string): Observable<Seat[]> {
-    return this.http.get<Seat[]>(`${this.baseUrl}/seats?showtimeId=${showtimeId}`);
+  getSeatsForShowtime(showtimeId: string): Observable<any> {
+    return this.http.get<any>(`http://localhost:3000/booking/showtime/${showtimeId}/seats`);
   }
 
-  confirmBooking(request: BookingRequest): Observable<Ticket> {
-    return this.http.post<Ticket>(`${this.baseUrl}/bookings`, request);
+  confirmBooking(request: any): Observable<any> {
+    return this.http.post<any>(this.baseUrl, request);
+  }
+  getShowtimesForMovie(movieId: string): Observable<any> {
+    return this.http.get<any>(`http://localhost:3000/showtime?movie=${movieId}`);
   }
 }

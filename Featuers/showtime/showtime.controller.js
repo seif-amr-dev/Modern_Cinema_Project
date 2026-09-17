@@ -101,8 +101,13 @@ exports.CreateShowtime = catchAsync(async (req, res, next) => {
 });
 
 exports.GetAllShowtimes = catchAsync(async (req, res, next) => {
+  let filter = { isDeleted: false };
+  if (req.query.movie) {
+    filter.movie = req.query.movie;
+  }
+
   const results = await showtimes
-    .find({ isDeleted: false })
+    .find(filter)
     .populate("movie")
     .populate("hall")
     .sort({ startTime: 1 });

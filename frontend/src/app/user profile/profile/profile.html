@@ -1,0 +1,42 @@
+<div class="profile-wrapper">
+  
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your profile...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="error-banner">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  } @else if (user()) {
+    <div class="profile-card">
+      
+      <div class="profile-header">
+        <div class="avatar-circle">
+          {{ user()?.name?.charAt(0) | uppercase }}
+        </div>
+        <h2>{{ user()?.name }}</h2>
+        <span class="user-role">{{ (user()?.role || 'Customer') | titlecase }}</span>
+      </div>
+
+      <div class="profile-body">
+        <div class="info-group">
+          <label>Email Address</label>
+          <div class="info-value">{{ user()?.email }}</div>
+        </div>
+
+        <div class="info-group">
+          <label>Account Status</label>
+          <div class="info-value status-active">Verified</div>
+        </div>
+      </div>
+
+      <div class="profile-footer">
+        <button class="logout-btn" (click)="onLogout()">Sign Out</button>
+      </div>
+      
+    </div>
+  }
+
+</div>

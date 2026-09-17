@@ -1,4 +1,4 @@
-export interface Seat{
+export interface Seat {
   id: string;
   price: number;
   number: number;
@@ -6,16 +6,17 @@ export interface Seat{
   type: 'normal' | 'vip';
   status: 'available' | 'booked' | 'selected';
 }
-export interface BookingRequest{
-  showId: string;
-  seatIds: string[];
-  totalPrice: number;
+
+export interface BookingRequest {
+  showtime: string; 
+  seats: { row: string; number: number }[];
 }
-export interface Ticket{
+
+export interface Ticket {
   bookingId: string;
   movieTitle: string;
   hallName: string;
   showTime: string;
-  seats:Seat[];
+  seats: Seat[];
   totalPrice: number;
 }

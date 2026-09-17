@@ -36,44 +36,42 @@ export class Auth {
     this.signupForm.reset();
     this.errorMessage = null; 
   }
-
-  onSubmit() {
+  async onSubmit() {
     this.errorMessage = null; 
 
     if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value).subscribe({
-        next: (response: any) => {
-          console.log('Login successful!', response);
-          localStorage.setItem('cinema_token', response.token);
-          this.authService.isLoggedIn.set(true);
-          this.router.navigate(['/']);
-        },
-        error: (err) => {
-          console.error('Login failed:', err);
-          this.errorMessage = err.error?.message || 'Invalid email or password';
-          this.cdr.detectChanges();
-        }
-      });
+      try {
+        const response: any = await this.authService.login(this.loginForm.value as any);
+        console.log('Login successful!', response);
+        localStorage.setItem('cinema_token', response.token);
+        this.authService.isLoggedIn.set(true);
+        this.router.navigate(['/']);
+        
+      } catch (err: any) {
+        console.error('Login failed:', err);
+        this.errorMessage = err.error?.message || 'Invalid email or password';
+        this.cdr.detectChanges();
+      }
     } else {
       console.warn('Login form is invalid!', this.loginForm.errors);
     }
   }
-
-  onSignup() {
+  async onSignup() {
     this.errorMessage = null;
+    
     if (this.signupForm.valid) {
-      this.authService.signup(this.signupForm.value).subscribe({
-        next: (res) => {
-          console.log('Account created!', res);
-          const userEmail = this.signupForm.value.email;
-          this.router.navigate(['/verify-email'], { queryParams: { email: userEmail } });
-        },
-        error: (err) => {
-          console.error('Signup failed:', err);
-          this.errorMessage = err.error?.message || 'Signup failed. Please try again.';
-          this.cdr.detectChanges();
-        }
-      });
+      try {
+        const res: any = await this.authService.signup(this.signupForm.value as any);
+        
+        console.log('Account created!', res);
+        const userEmail = this.signupForm.value.email;
+        this.router.navigate(['/verify-email'], { queryParams: { email: userEmail } });
+        
+      } catch (err: any) {
+        console.error('Signup failed:', err);
+        this.errorMessage = err.error?.message || 'Signup failed. Please try again.';
+        this.cdr.detectChanges();
+      }
     } else {
       console.warn('Signup form is invalid!', this.signupForm.errors);
     }
