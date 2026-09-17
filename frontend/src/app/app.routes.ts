@@ -5,6 +5,7 @@ import { authGuard } from './guards/auth-guard';
 import { guestGuard } from './guards/guest-guard';
 import { BookingPage } from './Feature/booking/pages/booking-page/booking-page';
 import { Profile } from './user profile/profile/profile';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { 
@@ -49,5 +50,36 @@ export const routes: Routes = [
     path: 'my-tickets',
     loadComponent: () => import('./Feature/booking/pages/my-tickets/my-tickets').then(m => m.MyTickets),
     canActivate: [authGuard]
-  }
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('./shared/admin-layout/admin-layout').then(m => m.AdminLayout),
+    canActivate: [adminGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./Feature/admin/dashboard/dashboard').then(m => m.Dashboard),
+      },
+      {
+        path: 'users',
+        data: { title: 'Users' },
+        loadComponent: () => import('./Feature/admin/users/users').then(m => m.Users),
+      },
+      {
+        path: 'movies',
+        data: { title: 'Movies' },
+        loadComponent: () => import('./Feature/admin/movies/movies').then(m => m.Movies),
+      },
+      {
+        path: 'showtimes',
+        data: { title: 'Showtimes' },
+        loadComponent: () => import('./Feature/admin/showtimes/showtimes').then(m => m.Showtimes),
+      },
+      {
+        path: 'halls',
+        loadComponent: () =>
+          import('./Feature/admin/halls/halls').then(m => m.Halls),
+      },
+    ],
+  },
 ];

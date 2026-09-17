@@ -1,0 +1,591 @@
+<section class="showtimes">
+
+  <header class="showtimes__header">
+    <div class="showtimes__heading">
+      <span class="showtimes__eyebrow">Schedule // Auditorium Timetable</span>
+      <h1 class="showtimes__title">Showtimes</h1>
+      <p class="showtimes__description">
+        Manage movie screenings, halls, schedules, and ticket prices.
+      </p>
+    </div>
+
+    <div class="showtimes__header-actions">
+      <span class="showtimes__sync-chip">
+        <span class="showtimes__sync-pulse" aria-hidden="true"></span>
+        Timeline synced
+      </span>
+      <button
+        type="button"
+        class="showtimes__add-btn"
+        (click)="openCreate()"
+        [disabled]="busy()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 5v14" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Add Showtime
+      </button>
+    </div>
+  </header>
+
+  <div class="showtimes__stats">
+    <article class="showtimes__stat">
+      <div class="showtimes__stat-text">
+        <span class="showtimes__stat-label">Total Scheduled</span>
+        <span class="showtimes__stat-value">{{ stats().totalScheduled }}</span>
+        <span class="showtimes__stat-note">Active matrix entries</span>
+      </div>
+      <span class="showtimes__stat-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M8.5 3.5a2.12 2.12 0 0 1 3 3l-5.5 5.5a2.12 2.12 0 0 1-3-3l5.5-5.5z" />
+          <path d="M6.5 10.5 13 4" />
+          <path d="M10 14l3.5-3.5a2.12 2.12 0 0 1 3 3l-5.5 5.5a2.12 2.12 0 0 1-3-3L10 14z" />
+          <path d="M14 18l-1.5-1.5" />
+        </svg>
+      </span>
+    </article>
+
+    <article class="showtimes__stat">
+      <div class="showtimes__stat-text">
+        <span class="showtimes__stat-label">Upcoming</span>
+        <span class="showtimes__stat-value showtimes__stat-value--secondary">
+          {{ stats().upcoming }}
+        </span>
+        <span class="showtimes__stat-note">Ahead of schedule</span>
+      </div>
+      <span class="showtimes__stat-icon showtimes__stat-icon--secondary" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      </span>
+    </article>
+
+    <article class="showtimes__stat">
+      <div class="showtimes__stat-text">
+        <span class="showtimes__stat-label showtimes__stat-label--live">
+          <span class="showtimes__live-dot" aria-hidden="true"></span>
+          Live Now
+        </span>
+        <span class="showtimes__stat-value showtimes__stat-value--primary">
+          {{ stats().live }}
+        </span>
+        <span class="showtimes__stat-note">Projectors running</span>
+      </div>
+      <span class="showtimes__stat-icon showtimes__stat-icon--primary" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="2" y="6" width="14" height="12" rx="2" />
+          <polygon points="16 10 22 7 22 17 16 14 16 10" />
+        </svg>
+      </span>
+    </article>
+
+    <article class="showtimes__stat">
+      <div class="showtimes__stat-text">
+        <span class="showtimes__stat-label">Today</span>
+        <span class="showtimes__stat-value showtimes__stat-value--tertiary">
+          {{ stats().today }}
+        </span>
+        <span class="showtimes__stat-note">Current operational day</span>
+      </div>
+      <span class="showtimes__stat-icon showtimes__stat-icon--tertiary" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      </span>
+    </article>
+  </div>
+
+  @if (optionsError(); as error) {
+    <div class="showtimes__options-error" role="alert">
+      <span>Schedule options unavailable: {{ error }}</span>
+      <button type="button" (click)="loadOptions()">Retry options</button>
+    </div>
+  }
+
+  <div class="showtimes__filters">
+    <div class="showtimes__tabs" role="tablist" aria-label="Filter by derived showtime status">
+      @for (tab of statusTabs; track tab.value) {
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="statusFilter() === tab.value"
+          class="showtimes__tab"
+          [class.showtimes__tab--active]="statusFilter() === tab.value"
+          (click)="setStatusFilter(tab.value)"
+        >
+          @if (tab.value === 'live') {
+            <span class="showtimes__tab-live-dot" aria-hidden="true"></span>
+          }
+          <span>{{ tab.label }}</span>
+          <span
+            class="showtimes__tab-count"
+            [class.showtimes__tab-count--active]="statusFilter() === tab.value"
+          >
+            {{
+              statusCounts()[
+                tab.value === 'all' ? 'all' : (tab.value === 'past' ? 'past' : tab.value)
+              ]
+            }}
+          </span>
+        </button>
+      }
+    </div>
+
+    <div class="showtimes__fields">
+      <div class="showtimes__search">
+        <svg
+          class="showtimes__search-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+          class="showtimes__search-input"
+          type="search"
+          [value]="searchText()"
+          (input)="onSearchInput($event)"
+          placeholder="Search movie titles or halls…"
+          aria-label="Search showtimes by movie or hall"
+        />
+      </div>
+
+      <label class="showtimes__field">
+        <span class="showtimes__field-label">Movie</span>
+        <select
+          class="showtimes__select"
+          (change)="setMovieFilter($event)"
+          [value]="movieFilter()"
+          aria-label="Filter by movie"
+        >
+          <option value="">All movies</option>
+          @for (movie of movieOptions(); track movie._id) {
+            <option [value]="movie._id">{{ movie.title }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="showtimes__field">
+        <span class="showtimes__field-label">Hall</span>
+        <select
+          class="showtimes__select"
+          (change)="setHallFilter($event)"
+          [value]="hallFilter()"
+          aria-label="Filter by hall"
+        >
+          <option value="">All halls</option>
+          @for (hall of hallOptions(); track hall._id) {
+            <option [value]="hall._id">{{ hall.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="showtimes__field">
+        <span class="showtimes__field-label">Date</span>
+        <input
+          class="showtimes__date-input"
+          type="date"
+          [value]="dateFilter()"
+          (change)="setDateFilter($event)"
+          aria-label="Filter by local date"
+        />
+      </label>
+
+      @if (hasActiveFilters()) {
+        <button type="button" class="showtimes__clear" (click)="clearFilters()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+          Clear
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (listLoading()) {
+    <div class="showtimes__table showtimes__table--loading" aria-busy="true" aria-label="Loading showtimes">
+      @for (row of skeletonRows; track row) {
+        <div class="showtimes__skeleton-row">
+          <div class="showtimes__skeleton showtimes__skeleton--poster"></div>
+          <div class="showtimes__skeleton showtimes__skeleton--line"></div>
+          <div class="showtimes__skeleton showtimes__skeleton--line showtimes__skeleton--short"></div>
+          <div class="showtimes__skeleton showtimes__skeleton--line showtimes__skeleton--short"></div>
+          <div class="showtimes__skeleton showtimes__skeleton--line showtimes__skeleton--short"></div>
+          <div class="showtimes__skeleton showtimes__skeleton--pill"></div>
+          <div class="showtimes__skeleton showtimes__skeleton--pill"></div>
+        </div>
+      }
+    </div>
+  } @else if (listError(); as error) {
+    <div class="showtimes__state" role="alert">
+      <div class="showtimes__state-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </div>
+      <h3 class="showtimes__state-title">Couldn't load the schedule</h3>
+      <p class="showtimes__state-message">{{ error }}</p>
+      <button type="button" class="showtimes__state-action" (click)="loadShowtimes()">
+        Try again
+      </button>
+    </div>
+  } @else if (showtimes().length === 0) {
+    <div class="showtimes__state">
+      <div class="showtimes__state-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="8" y1="15" x2="16" y2="15" />
+          <line x1="9" y1="9" x2="9.01" y2="9" />
+          <line x1="15" y1="9" x2="15.01" y2="9" />
+        </svg>
+      </div>
+      <h3 class="showtimes__state-title">No showtimes scheduled yet</h3>
+      <p class="showtimes__state-message">
+        The schedule matrix is empty. Allocate your first screening to a hall
+        and start building the daily timetable.
+      </p>
+      <button
+        type="button"
+        class="showtimes__state-action showtimes__state-action--primary"
+        (click)="openCreate()"
+      >
+        Add Showtime
+      </button>
+    </div>
+  } @else if (groups().length === 0) {
+    <div class="showtimes__state">
+      <div class="showtimes__state-icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      </div>
+      <h3 class="showtimes__state-title">No screenings match filters</h3>
+      <p class="showtimes__state-message">
+        Adjust the selected status, movie, hall, or operational date to inspect
+        available auditorium schedules.
+      </p>
+      <button type="button" class="showtimes__state-action" (click)="clearFilters()">
+        Reset query parameters
+      </button>
+    </div>
+  } @else {
+    <div class="showtimes__table">
+      <div class="showtimes__table-scroll">
+        <table class="showtimes__table-grid">
+          <thead>
+            <tr>
+              <th scope="col">Movie</th>
+              <th scope="col">Hall &amp; Equipment</th>
+              <th scope="col">Date</th>
+              <th scope="col">Time &amp; Duration</th>
+              <th scope="col" class="showtimes__th-numeric">Price</th>
+              <th scope="col" class="showtimes__th-center">Status</th>
+              <th scope="col" class="showtimes__th-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (group of groups(); track group.key) {
+              <tr class="showtimes__group-row">
+                <td [attr.colspan]="7">
+                  <div class="showtimes__group">
+                    <div class="showtimes__group-label">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
+                      <span class="showtimes__group-title">{{ group.label }}</span>
+                      <span class="showtimes__group-count">
+                        {{ group.items.length }}
+                        {{ group.items.length === 1 ? 'Screening' : 'Screenings' }}
+                      </span>
+                    </div>
+                    <span class="showtimes__group-caption">{{ group.caption }}</span>
+                  </div>
+                </td>
+              </tr>
+              @for (showtime of group.items; track showtime._id) {
+                <tr class="showtimes__row">
+                  <td>
+                    <div class="showtimes__movie-cell">
+                      <img
+                        class="showtimes__poster"
+                        [src]="showtime.movie.poster.url"
+                        [alt]="'Poster for ' + showtime.movie.title"
+                        loading="lazy"
+                      />
+                      <div class="showtimes__movie-meta">
+                        <span class="showtimes__movie-title">{{ showtime.movie.title }}</span>
+                        <div class="showtimes__movie-sub">
+                          @switch (showtime.movie.status) {
+                            @case ('now_showing') {
+                              <span class="showtimes__movie-badge showtimes__movie-badge--now">
+                                Now Showing
+                              </span>
+                            }
+                            @case ('coming_soon') {
+                              <span class="showtimes__movie-badge showtimes__movie-badge--soon">
+                                Coming Soon
+                              </span>
+                            }
+                            @case ('ended') {
+                              <span class="showtimes__movie-badge showtimes__movie-badge--ended">
+                                Ended
+                              </span>
+                            }
+                          }
+                          <span class="showtimes__movie-runtime">
+                            {{ showtime.movie.duration }} min
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="showtimes__hall-cell">
+                      <span class="showtimes__hall-name">{{ showtime.hall.name }}</span>
+                      <span class="showtimes__hall-capacity">
+                        {{ hallCapacity(showtime.hall) }} seats
+                      </span>
+                    </div>
+                  </td>
+                  <td class="showtimes__date-cell">
+                    {{ showtime.startTime | date: 'MMM d, y' }}
+                  </td>
+                  <td>
+                    <div class="showtimes__time-cell">
+                      <span class="showtimes__time-range">
+                        {{ showtime.startTime | date: 'h:mm a' }} → {{ showtime.endTime | date: 'h:mm a' }}
+                      </span>
+                      <span class="showtimes__time-duration">
+                        {{ formatMinutes(durationMinutes(showtime)) }} duration
+                      </span>
+                    </div>
+                  </td>
+                  <td class="showtimes__price-cell">
+                    {{ priceLabel(showtime.price) }}
+                  </td>
+                  <td class="showtimes__status-cell">
+                    @switch (statusOf(showtime, now())) {
+                      @case ('live') {
+                        <span class="showtimes__status showtimes__status--live">
+                          <span class="showtimes__status-dot" aria-hidden="true"></span>
+                          Live Now
+                        </span>
+                      }
+                      @case ('upcoming') {
+                        <span class="showtimes__status showtimes__status--upcoming">
+                          <span class="showtimes__status-dot" aria-hidden="true"></span>
+                          Upcoming
+                        </span>
+                      }
+                      @case ('past') {
+                        <span class="showtimes__status showtimes__status--past">
+                          <span class="showtimes__status-dot" aria-hidden="true"></span>
+                          Past
+                        </span>
+                      }
+                    }
+                  </td>
+                  <td>
+                    <div class="showtimes__actions">
+                      <button
+                        type="button"
+                        class="showtimes__action"
+                        (click)="openEdit(showtime)"
+                        [disabled]="busy()"
+                        title="Edit showtime"
+                        aria-label="Edit showtime for {{ showtime.movie.title }}"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        class="showtimes__action showtimes__action--delete"
+                        (click)="confirmDelete(showtime)"
+                        [disabled]="busy()"
+                        title="Soft-delete this showtime"
+                        aria-label="Delete showtime for {{ showtime.movie.title }}"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                          <path d="M10 11v6" />
+                          <path d="M14 11v6" />
+                          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="showtimes__table-footer">
+        <span>
+          Showing
+          <strong class="showtimes__count">{{ filtered().length }}</strong>
+          of
+          <strong class="showtimes__count">{{ showtimes().length }}</strong>
+          showtimes
+        </span>
+
+        @if (reloading()) {
+          <span class="showtimes__reloading" aria-live="polite">
+            <span class="showtimes__reloading-pulse" aria-hidden="true"></span>
+            Updating results…
+          </span>
+        }
+      </footer>
+    </div>
+  }
+
+  @if (formOpen()) {
+    <app-showtime-form
+      [mode]="formMode()"
+      [showtime]="editingShowtime()"
+      [movies]="movies()"
+      [halls]="halls()"
+      [saving]="formSaving()"
+      [serverError]="formError()"
+      (save)="onFormSubmit($event)"
+      (close)="closeForm()"
+    />
+  }
+
+  @if (deleteTarget(); as showtime) {
+    <app-showtime-delete
+      [showtime]="showtime"
+      [busy]="deleteSaving()"
+      [serverError]="deleteError()"
+      (confirm)="runDelete()"
+      (close)="closeDelete()"
+    />
+  }
+
+</section>

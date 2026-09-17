@@ -3,4 +3,5 @@ export interface ApiResponse<T> {
   message?: string;
   token?: string;
   results?: T; 
+  data?: T;
 }

@@ -1,0 +1,63 @@
+<div class="movie-delete">
+  <div
+    class="movie-delete__overlay"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="onCancel()"
+  >
+    <div
+      class="movie-delete__panel"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="movie-delete-title"
+    >
+      <div class="movie-delete__icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="15" y1="9" x2="9" y2="15" />
+          <line x1="9" y1="9" x2="15" y2="15" />
+        </svg>
+      </div>
+
+      <h3 id="movie-delete-title" class="movie-delete__title">
+        Delete movie “{{ movie().title }}”?
+      </h3>
+
+      <p class="movie-delete__message">
+        This action soft-deletes the movie and removes it from the active
+        catalog. It cannot be restored from this console.
+      </p>
+
+      @if (serverError(); as error) {
+        <p class="movie-delete__error" role="alert">{{ error }}</p>
+      }
+
+      <div class="movie-delete__actions">
+        <button
+          type="button"
+          class="movie-delete__button movie-delete__button--ghost"
+          (click)="onCancel()"
+          [disabled]="busy()"
+          autofocus
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="movie-delete__button movie-delete__button--danger"
+          (click)="onConfirm()"
+          [disabled]="busy()"
+        >
+          {{ busy() ? 'Deleting…' : 'Delete' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

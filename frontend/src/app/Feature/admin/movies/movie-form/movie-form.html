@@ -1,0 +1,383 @@
+<div class="movie-form">
+  <div
+    class="movie-form__overlay"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="onEscape()"
+  >
+    <div
+      class="movie-form__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="movie-form-title"
+    >
+      <header class="movie-form__header">
+        <div class="movie-form__heading">
+          <div class="movie-form__heading-icon" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <path d="M8 21h8" />
+              <path d="M12 17v4" />
+            </svg>
+          </div>
+          <div class="movie-form__heading-text">
+            <h2 id="movie-form-title" class="movie-form__title">{{ title() }}</h2>
+            <p class="movie-form__subtitle">{{ subtitle() }}</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="movie-form__close"
+          (click)="onCancel()"
+          [disabled]="saving()"
+          aria-label="Close dialog"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </header>
+
+      <form
+        class="movie-form__form"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        novalidate
+      >
+        <div class="movie-form__field">
+          <label class="movie-form__label" for="movie-form-title-input">Feature Title</label>
+          <input
+            class="movie-form__input"
+            id="movie-form-title-input"
+            type="text"
+            formControlName="title"
+            required
+            autofocus
+          />
+          @if (hasError('title', 'required')) {
+            <p class="movie-form__error" role="alert">
+              {{ validationMessage('title', 'required') }}
+            </p>
+          }
+          @if (hasError('title', 'maxlength')) {
+            <p class="movie-form__error" role="alert">
+              {{ validationMessage('title', 'maxlength') }}
+            </p>
+          }
+        </div>
+
+        <div class="movie-form__field">
+          <label class="movie-form__label" for="movie-form-description">Synopsis / Logline</label>
+          <textarea
+            class="movie-form__input movie-form__textarea"
+            id="movie-form-description"
+            rows="3"
+            formControlName="description"
+            required
+          ></textarea>
+          @if (hasError('description', 'required')) {
+            <p class="movie-form__error" role="alert">
+              {{ validationMessage('description', 'required') }}
+            </p>
+          }
+          @if (hasError('description', 'maxlength')) {
+            <p class="movie-form__error" role="alert">
+              {{ validationMessage('description', 'maxlength') }}
+            </p>
+          }
+        </div>
+
+        <div class="movie-form__field">
+          <span class="movie-form__label">Master Poster Asset (2:3)</span>
+          <div class="movie-form__poster">
+            <div class="movie-form__poster-preview">
+              @if (hasPosterPreview()) {
+                <img
+                  class="movie-form__poster-img"
+                  [src]="posterPreview() ?? ''"
+                  [alt]="mode() === 'edit' ? 'Current poster for ' + (movie()?.title ?? '') : 'Selected poster preview'"
+                />
+              } @else {
+                <span class="movie-form__poster-placeholder" aria-hidden="true">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                    <path d="M8 21h8" />
+                    <path d="M12 17v4" />
+                  </svg>
+                </span>
+              }
+            </div>
+
+            <div class="movie-form__poster-body">
+              <div class="movie-form__poster-filename">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                <span>{{ posterName() }}</span>
+              </div>
+              <p class="movie-form__poster-hint">
+                Recommended 1200x1800 px • Image only, up to 5 MB
+              </p>
+              @if (posterError(); as error) {
+                <p class="movie-form__error" role="alert">{{ error }}</p>
+              }
+            </div>
+
+            <input
+              #posterInput
+              class="movie-form__poster-input"
+              id="movie-form-poster"
+              type="file"
+              accept="image/*"
+              (change)="onPosterSelected($event)"
+            />
+            <label class="movie-form__poster-button" for="movie-form-poster">
+              {{ mode() === 'edit' && !posterFile() ? 'Replace' : 'Upload' }}
+            </label>
+          </div>
+        </div>
+
+        <div class="movie-form__grid">
+          <div class="movie-form__field">
+            <label class="movie-form__label" for="movie-form-duration">Duration (Minutes)</label>
+            <input
+              class="movie-form__input movie-form__input--number"
+              id="movie-form-duration"
+              type="number"
+              min="90"
+              step="1"
+              formControlName="duration"
+              required
+            />
+            @if (hasError('duration', 'required')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('duration', 'required') }}
+              </p>
+            }
+            @if (hasError('duration', 'min')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('duration', 'min') }}
+              </p>
+            }
+          </div>
+
+          <div class="movie-form__field">
+            <label class="movie-form__label" for="movie-form-rating">Age Rating</label>
+            <select
+              class="movie-form__input"
+              id="movie-form-rating"
+              formControlName="ageRating"
+              required
+            >
+              <option value="" disabled>Select a rating</option>
+              @for (rating of ageRatings; track rating.value) {
+                <option [value]="rating.value">{{ rating.label }}</option>
+              }
+            </select>
+            @if (hasError('ageRating', 'required')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('ageRating', 'required') }}
+              </p>
+            }
+          </div>
+
+          <div class="movie-form__field">
+            <label class="movie-form__label" for="movie-form-release">Theatrical Release Date</label>
+            <input
+              class="movie-form__input movie-form__input--date"
+              id="movie-form-release"
+              type="date"
+              formControlName="releaseDate"
+              required
+            />
+            @if (hasError('releaseDate', 'required')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('releaseDate', 'required') }}
+              </p>
+            }
+          </div>
+
+          <div class="movie-form__field">
+            <label class="movie-form__label" for="movie-form-score">Score (0–10)</label>
+            <input
+              class="movie-form__input movie-form__input--number"
+              id="movie-form-score"
+              type="number"
+              min="0"
+              max="10"
+              step="0.1"
+              formControlName="score"
+              required
+            />
+            @if (hasError('score', 'required')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('score', 'required') }}
+              </p>
+            }
+            @if (hasError('score', 'min')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('score', 'min') }}
+              </p>
+            }
+            @if (hasError('score', 'max')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('score', 'max') }}
+              </p>
+            }
+          </div>
+
+          <div class="movie-form__field">
+            <label class="movie-form__label" for="movie-form-status">Screening Lifecycle</label>
+            <select
+              class="movie-form__input"
+              id="movie-form-status"
+              formControlName="status"
+              required
+            >
+              <option value="" disabled>Select a status</option>
+              @for (status of statuses; track status.value) {
+                <option [value]="status.value">{{ status.label }}</option>
+              }
+            </select>
+            @if (hasError('status', 'required')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('status', 'required') }}
+              </p>
+            }
+          </div>
+
+          <div class="movie-form__field">
+            <label class="movie-form__label" for="movie-form-director">Director(s)</label>
+            <input
+              class="movie-form__input"
+              id="movie-form-director"
+              type="text"
+              formControlName="director"
+              placeholder="e.g. Christopher Nolan"
+            />
+            <p class="movie-form__hint">Optional.</p>
+          </div>
+
+          <div class="movie-form__field">
+            <label class="movie-form__label" for="movie-form-genres">Genres</label>
+            <input
+              class="movie-form__input"
+              id="movie-form-genres"
+              type="text"
+              formControlName="genres"
+              placeholder="Sci-Fi, Drama"
+              required
+            />
+            <p class="movie-form__hint">Comma-separated.</p>
+            @if (hasError('genres', 'required')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('genres', 'required') }}
+              </p>
+            }
+          </div>
+
+          <div class="movie-form__field movie-form__field--span">
+            <label class="movie-form__label" for="movie-form-cast">Starring Cast</label>
+            <input
+              class="movie-form__input"
+              id="movie-form-cast"
+              type="text"
+              formControlName="cast"
+              placeholder="Matthew McConaughey, Anne Hathaway"
+            />
+            <p class="movie-form__hint">Optional. Comma-separated names.</p>
+          </div>
+
+          <div class="movie-form__field movie-form__field--span">
+            <label class="movie-form__label" for="movie-form-trailer">Official Trailer Stream URL</label>
+            <input
+              class="movie-form__input"
+              id="movie-form-trailer"
+              type="url"
+              formControlName="trailerUrl"
+              placeholder="https://youtube.com/watch?v=…"
+            />
+            <p class="movie-form__hint">Optional.</p>
+            @if (hasError('trailerUrl', 'url')) {
+              <p class="movie-form__error" role="alert">
+                {{ validationMessage('trailerUrl', 'url') }}
+              </p>
+            }
+          </div>
+        </div>
+
+        @if (serverError(); as error) {
+          <p class="movie-form__server-error" role="alert">{{ error }}</p>
+        }
+
+        <footer class="movie-form__footer">
+          <div class="movie-form__footer-status">
+            <span class="movie-form__footer-pulse" aria-hidden="true"></span>
+            <span>{{ mode() === 'edit' ? 'Asset verified' : 'New ingest' }}</span>
+          </div>
+          <div class="movie-form__footer-actions">
+            <button
+              type="button"
+              class="movie-form__button movie-form__button--ghost"
+              (click)="onCancel()"
+              [disabled]="saving()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="movie-form__button movie-form__button--primary"
+              [disabled]="saving()"
+            >
+              {{
+                saving()
+                  ? mode() === 'create'
+                    ? 'Publishing…'
+                    : 'Updating…'
+                  : mode() === 'create'
+                    ? 'Ingest & Publish'
+                    : 'Update Movie'
+              }}
+            </button>
+          </div>
+        </footer>
+      </form>
+    </div>
+  </div>
+</div>

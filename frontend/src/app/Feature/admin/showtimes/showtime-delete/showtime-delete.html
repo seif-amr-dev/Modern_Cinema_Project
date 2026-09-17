@@ -1,0 +1,70 @@
+<div class="showtime-delete">
+  <div
+    class="showtime-delete__overlay"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="onCancel()"
+  >
+    <div
+      class="showtime-delete__panel"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="showtime-delete-title"
+    >
+      <div class="showtime-delete__icon" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="15" y1="9" x2="9" y2="15" />
+          <line x1="9" y1="9" x2="15" y2="15" />
+        </svg>
+      </div>
+
+      <h3 id="showtime-delete-title" class="showtime-delete__title">
+        Delete showtime “{{ showtime().movie.title }}”?
+      </h3>
+
+      <p class="showtime-delete__slot">
+        {{ showtime().startTime | date: 'EEE, MMM d' }} · {{
+          showtime().startTime | date: 'h:mm a'
+        }} → {{ showtime().endTime | date: 'h:mm a' }} · {{ showtime().hall.name }}
+      </p>
+
+      <p class="showtime-delete__message">
+        This soft-deletes the showtime and removes it from the active schedule.
+        Existing bookings and reserved seats are not modified, and it cannot be
+        restored from this console.
+      </p>
+
+      @if (serverError(); as error) {
+        <p class="showtime-delete__error" role="alert">{{ error }}</p>
+      }
+
+      <div class="showtime-delete__actions">
+        <button
+          type="button"
+          class="showtime-delete__button showtime-delete__button--ghost"
+          (click)="onCancel()"
+          [disabled]="busy()"
+          autofocus
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="showtime-delete__button showtime-delete__button--danger"
+          (click)="onConfirm()"
+          [disabled]="busy()"
+        >
+          {{ busy() ? 'Deleting…' : 'Delete Showtime' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
