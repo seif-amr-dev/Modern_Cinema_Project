@@ -16,7 +16,6 @@ export class ResetPassword implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
-
   errorMessage: string | null = null;
   successMessage: string | null = null;
   isLoading = false;
@@ -33,7 +32,6 @@ export class ResetPassword implements OnInit {
   }
 
   ngOnInit() {
-    // Extract token from URL /reset-password/:token
     const token = this.route.snapshot.paramMap.get('token');
     if (token) {
       this.authService.resetToken.set(token);
@@ -55,8 +53,6 @@ export class ResetPassword implements OnInit {
         
         this.successMessage = response.message || 'Password reset successfully.';
         this.resetForm.reset();
-        
-        // Navigate to login after 2 seconds
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 2000);
