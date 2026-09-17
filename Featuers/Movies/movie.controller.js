@@ -60,7 +60,10 @@ exports.GetAllMovies = catchAsync(async (req, res, next) => {
   }
 
   if (req.query.search) {
-    filter.$text = { $search: req.query.search };
+    filter.$or = [
+      { title: { $regex: req.query.search, $options: 'i' } },
+      { description: { $regex: req.query.search, $options: 'i' } }
+    ];
   }
 
   const page = Math.max(+req.query.page || 1, 1);
