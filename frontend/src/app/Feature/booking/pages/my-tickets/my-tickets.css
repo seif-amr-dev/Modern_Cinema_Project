@@ -1,0 +1,132 @@
+.tickets-overlay {
+  min-height: calc(100vh - 70px);
+  background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+  padding: 40px 5%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.tickets-container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  color: #f8fafc;
+  font-size: 2.5rem;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.page-header p {
+  color: #94a3b8;
+  margin-top: 8px;
+  font-size: 1.1rem;
+}
+
+.tickets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+  justify-items: center;
+}
+
+/* Status States */
+.status-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #94a3b8;
+  font-size: 1.1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--accent-gold, #f5c518);
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.error {
+  color: #ef4444;
+}
+
+.retry-btn {
+  margin-top: 15px;
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.retry-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  text-align: center;
+  padding: 40px;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.empty-state h3 {
+  color: #f8fafc;
+  font-size: 1.5rem;
+  margin: 0 0 10px;
+}
+
+.empty-state p {
+  color: #94a3b8;
+  margin: 0 0 25px;
+}
+
+.browse-btn {
+  background: var(--accent-gold, #f5c518);
+  color: #020617;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.browse-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(245, 197, 24, 0.3);
+}

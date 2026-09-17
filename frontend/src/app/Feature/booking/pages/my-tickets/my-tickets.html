@@ -1,0 +1,35 @@
+<div class="tickets-overlay">
+  <div class="tickets-container">
+    
+    <div class="page-header">
+      <h1>My Tickets</h1>
+      <p>Your cinematic journey</p>
+    </div>
+
+    @if (isLoading()) {
+      <div class="status-msg">
+        <div class="spinner"></div>
+        <p>Fetching your tickets...</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="status-msg error">
+        <p>{{ errorMessage() }}</p>
+        <button class="retry-btn" (click)="fetchTickets()">Try Again</button>
+      </div>
+    } @else if (tickets().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">🎟️</div>
+        <h3>No Tickets Found</h3>
+        <p>You haven't booked any movies yet.</p>
+        <a class="browse-btn" href="/">Browse Movies</a>
+      </div>
+    } @else {
+      <div class="tickets-grid">
+        @for (ticket of tickets(); track ticket.bookingId) {
+          <app-digital-ticket [ticket]="ticket"></app-digital-ticket>
+        }
+      </div>
+    }
+
+  </div>
+</div>

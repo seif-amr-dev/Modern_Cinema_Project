@@ -33,5 +33,10 @@ export const routes: Routes = [
   path: 'profile', 
   component:Profile,
   canActivate: [authGuard] 
-}
+  },
+  {
+    path: 'my-tickets',
+    loadComponent: () => import('./Feature/booking/pages/my-tickets/my-tickets').then(m => m.MyTickets),
+    canActivate: [authGuard]
+  }
 ];

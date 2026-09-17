@@ -67,8 +67,17 @@
   font-weight: 600;
   font-size: 0.95rem;
   background: rgba(255, 255, 255, 0.1);
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.user-badge:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 .logout-btn {

@@ -122,4 +122,22 @@ export class Booking {
   clearSelection(): void {
     this.selectedSeatsSubject.next([]);
   }
+
+  getMyBookings(): Observable<Ticket[]> {
+    return this.bookingApi.getMyBookings().pipe(
+      map(response => {
+        const bookings = response.results || response.data || response;
+        if (!Array.isArray(bookings)) return [];
+        
+        return bookings.map(data => ({
+          bookingId: data._id,
+          movieTitle: data.showtime?.movie?.title || 'Unknown Movie',
+          hallName: data.showtime?.hall?.name || 'Unknown Hall',
+          showTime: data.showtime?.startTime,
+          seats: data.seats,
+          totalPrice: data.totalPrice
+        } as Ticket));
+      })
+    );
+  }
 }

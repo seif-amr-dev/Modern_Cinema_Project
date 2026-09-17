@@ -19,4 +19,8 @@ export class BookingApi {
   getShowtimesForMovie(movieId: string): Observable<any> {
     return this.http.get<any>(`http://localhost:3000/showtime?movie=${movieId}`);
   }
+
+  getMyBookings(): Observable<any> {
+    return this.http.get<any>(this.baseUrl);
+  }
 }
