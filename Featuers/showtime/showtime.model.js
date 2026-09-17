@@ -30,6 +30,8 @@ const ShowtimeSchema = new mongoose.Schema(
       min: [0, "Price cannot be negative"]
     },
 
+  
+
     isActive: {
       type: Boolean,
       default: true

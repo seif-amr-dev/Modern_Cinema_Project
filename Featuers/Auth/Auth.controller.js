@@ -224,3 +224,55 @@ data:userdata
 
 
 
+
+exports.UpdateUserImage = catchAsync(async (req, res, next) => {
+  if (!req.file) {
+    return next(new AppError(400, "Image is required"));
+  }
+
+  const user = await users.findOne({
+    _id: req.params.id,
+    isDeleted: false
+  });
+
+  if (!user) {
+    return next(new AppError(404, "User not found"));
+  }
+
+  const result = await uploadToCloudinary(
+    req.file.buffer,
+    "cinema/users"
+  );
+
+  const oldPublicId = user.image?.publicId;
+
+  user.image = {
+    url: result.secure_url,
+    publicId: result.public_id
+  };
+
+  await user.save();
+
+  if (oldPublicId) {
+    await cloudinary.uploader.destroy(oldPublicId);
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Profile image updated successfully",
+    result: user
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
